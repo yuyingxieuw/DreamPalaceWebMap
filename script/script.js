@@ -511,9 +511,9 @@ class EventManager {
   }
 
   attachLayerControl() {
-    const baseLayers = {
-      "Open Street Basemap": this.app.layerManager.openStreetMap,
-    };
+    // const baseLayers = {
+    //   "Open Street Basemap": this.app.layerManager.openStreetMap,
+    // };
     const overLays = {
       "City Boundary": this.app.layerManager.city,
       "Country Boundary": this.app.layerManager.world,
