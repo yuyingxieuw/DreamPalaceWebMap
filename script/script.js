@@ -39,7 +39,7 @@ class LayerManager {
   }
 
   loadAllLayers() {
-    //设置pan决定层级
+    //set pan level
     this.app.map.createPane("palacePane");
     this.app.map.createPane("cityPane");
     this.app.map.createPane("worldPane");
