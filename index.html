@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Dream Places</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    
+    <link rel="stylesheet" href="css/style.css"/>
+    <link rel = "stylesheet" href= "css/leaflet-sidebar.css">
+    <link rel="stylesheet" href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/leaflet-geoman.css">
+    <link rel="stylesheet" href="node_modules/leaflet-search/src/leaflet-search.css">
+
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+    <script src="node_modules/leaflet-search/src/leaflet-search.js"></script>
+    <script src="plugins/ajax/leaflet.ajax.js"></script>
+    <script src="script/leaflet-sidebar.js"></script> 
+    <script src="script/leaflet-geoman.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- jQuery UI -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css"/>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/proj4@2.9.0/dist/proj4.js"></script>
+    <script src="https://unpkg.com/proj4leaflet@1.0.2/src/proj4leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.vectorgrid@1.3.0/dist/Leaflet.VectorGrid.bundled.js"></script>
+    <!-- map script cod Defer -->
+    <script defer src="script/script_oop.js"></script>
+
+
+    <title>Dream Places</title>
+  </head>
+  <body>
+    <!-- Side Bar -->
+    <div id="sidebar" class="sidebar collapsed">
+          <!-- Nav tabs -->
+        <div class="sidebar-tabs">
+            <ul role="tablist">
+                <li><a href="#home" role="tab"><i class="fa fa-bars"></i></a></li>
+                <li><a href="#profile" role="tab"><i class="fa fa-user"></i></a></li>
+                <li class="disabled"><a href="#messages" role="tab"><i class="fa fa-envelope"></i></a></li>
+                <li><a href="https://github.com/Turbo87/sidebar-v2" role="tab" target="_blank"><i class="fa fa-github"></i></a></li>
+            </ul>
+
+            <ul role="tablist">
+                <li><a href="#settings" role="tab"><i class="fa fa-gear"></i></a></li>
+            </ul>
+        </div>
+
+        <!-- Tab panes -->
+        <div class="sidebar-content">
+            <div class="sidebar-pane" id="home">
+                <h1 class="sidebar-header text-left">
+                    Dream Palaces Mapping Project
+                    <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+                </h1>
+                
+                <!-- Menu Level 1 (Explore Dream Palaces & Data Query) -->
+                <div class="menu_container" id = "level_1_menu_group" style= "margin-bottom: 5px; margin-top:10px">
+                    <a class="level_1_menu" id="explore" href="#">Explore Dream Palaces</a>
+                    <a class="level_1_menu" id="data_query" href="#">Data Query</a>       
+                </div>
+                <div class = "col-xs-12 line"></div>
+
+                <!-- Menu Level 2 (About Project & Data Source & About Team) -->
+                <div id = "explore_container">
+                    <div class="menu_container" id = "level_2_menu_group" style= "margin-bottom: 5px; margin-top: 18px">
+                        <div class="sidebar_menu" id = "level_2_menu_group_1">
+                            <a class="level_2_menu" id="about_project" href="#">About Project +</a>
+                            <a class="level_2_menu" id="data_source" href="#">Data Source +</a> 
+                            <a class="level_2_menu" id="about_team" href="#">About Team +</a>  
+                        </div>  
+                        <div class="sidebar_menu" id = "level_2_menu_group_2">
+                            <a class="level_2_menu" id="explore_area" href="#">Explore Area</a>
+                            <a class="level_2_menu" id="palace_history" href="#">Palace History</a> 
+                            <a class="level_2_menu" id="picture_more" href="#">Picture and More</a>  
+                        </div>
+                    </div>
+
+                    <!-- Explore Dream Palaces Content Part -->
+                    <div id = "explore_container_no_menu">
+                        <div class = "content_container" id = "about_project_content">
+                            <p id = "about_project_text">Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
+                                Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
+                                Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos. 
+                            </p>
+                        </div>
+                        <div class = "content_container" id = "data_source_content">
+                            <ul id = "data_source">
+                                <li>
+                                    <strong>News Paper</strong> 
+                                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
+                                        Lorem ipsum dolor sit amet</p>
+                                </li>
+                                <li>
+                                    <strong>Social Media</strong> 
+                                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
+                                        Lorem ipsum dolor sit amet</p>
+                                </li>
+                                <li>
+                                    <strong>Local Institutions</strong> 
+                                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
+                                        Lorem ipsum dolor sit amet</p>
+                                </li>  
+                                <li>
+                                    <strong>Other Inspiration</strong> 
+                                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
+                                        Lorem ipsum dolor sit amet</p>
+                                </li> 
+                            </ul>
+                        </div>
+                        <div class = "content_container" id = "about_team_content">
+                            <ul id = "about_team_text">
+                                <li>Data Collection</li>
+                                <li>Data Cleaning</li>
+                                <li>Communication</li>
+                                <li>Website Making</li>
+                            </ul>
+                        </div>
+                        <div class = "content_container" id = "explore_area_content">
+                            <p id = "about_project_text">Explore Area
+                            </p>
+                        </div>
+                        <div class = "content_container" id = "palace_history_content">
+                            <p id = "about_project_text">Some history here
+                            </p>
+                        </div>
+                        <div class = "content_container" id = "picture_more_content">
+                            <p id = "about_project_text"> More knowedge please
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            <!-- Data Query Content Part -->
+            <div id = data_container>
+                <div id = "query_statistics_container">
+                    <div id = "data_query_window"></div>
+                </div>
+                <div class = "col-xs-12 line"></div>
+                <div id = "data_operation_container">
+                    <p> You can use the edit bar in the right side to draw a pin in the area that the cinema locats. 
+                        You can drag it or remove it after dorop the pin. Fill the form below and let us know other data about the cinema.
+                        <br>Submit as a reader: Your data will be sumbit to a "waiting room" database the team will add it later. 
+                        <br>Submit as admin: With correct user name and passcode, you can edit database directly through the website.
+                    </p>
+                    <form onsubmit="handleSubmit(event)">
+                        <input type="text" name="cinemaName" placeholder="name of the cinema">
+                        <input type="text" name="location" placeholder="specific Location">
+                        <br><input type="text" name="city" placeholder="city">
+                        <input type="text" name="state" placeholder="state/province">
+                        <br><input type="text" name="country" placeholder="country">
+                        <input type="text" name="other" placeholder="other content">
+                        <br><input type="text" name="experience" placeholder="your experience">
+                        <br><button type="submit">Submit All</button>
+                    </form>
+                </div>
+            </div>
+            <!-- reset -->
+            <!-- <div id = "Reset" class = "col-xs-12">
+                <div class = "col-xs-12 errorMsg" id="reset_error"></div>
+                <div class="col-xs-12" style="height: 10px;"></div> 
+                
+                <div class="col-xs-12 text-center">
+                    <button type="button" class="btn btn-primary"id="resetBtn"
+                    style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;width: 100px">
+                    Reset Data
+                    </button>
+                    <button type="button" class="btn btn-primary"id="backBtn"
+                    style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;width: 100px">
+                    Back to Main
+                    </button>
+                </div>
+            </div> -->
+        </div>
+            <!-- Need to be delete -->
+            <div class="sidebar-pane" id="profile">
+                <h1 class="sidebar-header text-center">Data Queer<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+            </div>
+
+            <div class="sidebar-pane" id="messages">
+                <h1 class="sidebar-header">Messages<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+            </div>
+
+            <div class="sidebar-pane" id="settings">
+                <h1 class="sidebar-header">Settings<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Choose Palace Point Styles -->
+    <form id="choose_style">
+            <div>Show Palace Data Based on:</div>
+            <label> <input type="radio" id="pointStyle1" name = "choosestyle" checked> Current Status </label>
+            <label> <input type="radio" id="pointStyle2" name = "choosestyle"> Have Specific Location data </label>
+    </form>
+
+    <!-- map part -->
+    <div class = "map-container">
+        <div id="map"></div>
+    </div>
+
+  </body>
+</html>
