@@ -31,3 +31,6 @@ def transform(in_path, out_path):
         json.dump(data,f,ensure_ascii=False)
 
 transform("assets/worldPolygon.geojson","assets/spilhaus.geojson")
+
+
+
