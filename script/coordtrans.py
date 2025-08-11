@@ -1,4 +1,3 @@
-
 from pyproj import CRS, Transformer
 import json 
 
@@ -11,20 +10,6 @@ import json
 
 # print(crs_3857.to_wkt)
 # print(crs_4326.to_wkt)
-
-# tform = Transformer.from_crs(crs_4326, crs_54099, always_xy = True)
-
-# def coord_trans (x,y):
-#     x_new, y_new = tform.transform(x,y)
-#     return [x_new, y_new]
-
-
-# def transform_geojson (in_path, out_path):
-#     with open(in_path, "r", encoding= "utf=8") as f:
-#         data = json.load(f)
-#     for feature in data.get("features"):
-#         coord = feature
-
 
 def transform(in_path, out_path):
     crs_54099 = CRS.from_proj4("+proj=spilhaus +lat_0=-49.56371678 +lon_0=66.94970198 +azi=40.17823482 +k_0=1.4142135623731 +rot=45 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs")
