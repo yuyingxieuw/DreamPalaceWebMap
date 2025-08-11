@@ -65,17 +65,16 @@ var map_spilhaus = L.map("map", {
   zoomControl: false,
 }).setView([0, -101], 3);
 
-L.tileLayer("tiles/{z}/{x}/{y}.png", {
-  tms: true,
-  tileSize: 256,
-  minZoom: 0,
-  maxZoom: 3,
-  noWrap: true,
-}).addTo(map_spilhaus);
+// L.tileLayer("tiles/{z}/{x}/{y}.png", {
+//   tms: true,
+//   tileSize: 256,
+//   minZoom: 0,
+//   maxZoom: 3,
+//   noWrap: true,
+// }).addTo(map_spilhaus);
 
 var sidebar = L.control.sidebar("sidebar", { position: "left" });
 map_spilhaus.addControl(sidebar);
-sidebar.open("home");
 
 var country_array = [
   "Brazil",
@@ -91,9 +90,15 @@ var country_array = [
   "United States of America",
 ];
 
+// geojson layer
+// proj4.defs(
+//   "ESRI:54099",
+//   "+proj=spilhaus +lat_0=-49.56371678 +lon_0=66.94970198 +azi=40.17823482 +k_0=1.4142135623731 +rot=45 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs"
+// );
+
 proj4.defs(
   "ESRI:54099",
-  "+proj=spilhaus +lat_0=-49.56371678 +lon_0=66.94970198 +azi=40.17823482 +k_0=1.4142135623731 +rot=45 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs"
+  "+proj=moll +lon_0=0 +x_0=0 +y_0=0 +units=m +datum=WGS84 +no_defs"
 );
 
 fetch("assets/worldPolygon4326.geojson")
@@ -128,6 +133,7 @@ fetch("assets/worldPolygon4326.geojson")
     });
     worldLayer.addTo(map_spilhaus);
   });
+console.log(Object.keys(proj4.Proj.projections));
 
 // var world = new L.GeoJSON.AJAX("assets/worldPolygon.geojson", {
 //   style: (feature) => {
