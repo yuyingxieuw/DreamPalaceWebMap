@@ -5,7 +5,7 @@ with open ("assets/spilhaus.geojson", "r", encoding = "utf-8") as f:
 
 for feature in data.get("features"):
     country = feature.get("properties").get("NAME")
-    if country == "Mali":
-        with open("assets/Mali.geojson", "w", encoding = "utf-8") as d:
+    if country == "United States of America":
+        with open("assets/us.geojson", "w", encoding = "utf-8") as d:
             json.dump(feature, d,ensure_ascii=False)
             

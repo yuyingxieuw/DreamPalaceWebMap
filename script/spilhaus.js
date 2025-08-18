@@ -106,14 +106,12 @@ const resolutions = [
   26677.77794379123588, // z=3
 ];
 
-// 3) 定义 CRS（左上原点、bounds、精确分辨率）
 const spilhausCRS = new L.Proj.CRS("ESRI:54099", proj4.defs("ESRI:54099"), {
   origin: [minx, maxy], // 左上角 (minx, maxy)
   resolutions, // 与 XML 完全一致
   bounds: L.bounds([minx, miny], [maxx, maxy]), // 限制平移
 });
 
-// 4) 初始化地图（只用整数级，避免半级插值误差）
 const map_spilhaus = L.map("map", {
   crs: spilhausCRS,
   center: [0, 0],
@@ -128,7 +126,6 @@ const map_spilhaus = L.map("map", {
   inertia: false,
 });
 
-// 5) 加载 TMS 瓦片（tileSize=256，声明原生级别）
 L.tileLayer("tiles8.12/{z}/{x}/{y}.png", {
   tms: true,
   tileSize: 256,
@@ -141,14 +138,284 @@ L.tileLayer("tiles8.12/{z}/{x}/{y}.png", {
   keepBuffer: 2,
 }).addTo(map_spilhaus);
 
-// 6) 加载 ESRI:54099 米坐标的 Polygon GeoJSON
 fetch("assets/Brazil.geojson", { cache: "no-cache" })
   .then((r) => {
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     return r.json();
   })
   .then((geojson) => {
-    // 声明 GeoJSON 的 CRS，按米坐标解释
+    geojson.crs = { type: "name", properties: { name: "ESRI:54099" } };
+
+    const polyLayer = new L.Proj.GeoJSON(geojson, {
+      style: {
+        color: "#1f2937",
+        weight: 1,
+        fillColor: "#60a5fa",
+        fillOpacity: 0.25,
+      },
+      onEachFeature: (feature, layer) => {
+        layer.on({
+          mouseover: (e) => {
+            e.target.setStyle({ weight: 2, fillOpacity: 0.35 });
+            e.target.bringToFront();
+          },
+          mouseout: (e) => {
+            polyLayer.resetStyle(e.target);
+          },
+        });
+      },
+    }).addTo(map_spilhaus);
+
+    // 可选：视图贴合
+    // const b = polyLayer.getBounds();
+    // if (b.isValid()) map_spilhaus.fitBounds(b, { maxZoom: 3, padding: [10,10] });
+  })
+  .catch((err) => console.error("GeoJSON load failed:", err));
+
+fetch("assets/Burkina_Faso.geojson", { cache: "no-cache" })
+  .then((r) => {
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json();
+  })
+  .then((geojson) => {
+    geojson.crs = { type: "name", properties: { name: "ESRI:54099" } };
+
+    const polyLayer = new L.Proj.GeoJSON(geojson, {
+      style: {
+        color: "#1f2937",
+        weight: 1,
+        fillColor: "#60a5fa",
+        fillOpacity: 0.25,
+      },
+      onEachFeature: (feature, layer) => {
+        layer.on({
+          mouseover: (e) => {
+            e.target.setStyle({ weight: 2, fillOpacity: 0.35 });
+            e.target.bringToFront();
+          },
+          mouseout: (e) => {
+            polyLayer.resetStyle(e.target);
+          },
+        });
+      },
+    }).addTo(map_spilhaus);
+
+    // 可选：视图贴合
+    // const b = polyLayer.getBounds();
+    // if (b.isValid()) map_spilhaus.fitBounds(b, { maxZoom: 3, padding: [10,10] });
+  })
+  .catch((err) => console.error("GeoJSON load failed:", err));
+
+fetch("assets/Cameroon.geojson", { cache: "no-cache" })
+  .then((r) => {
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json();
+  })
+  .then((geojson) => {
+    geojson.crs = { type: "name", properties: { name: "ESRI:54099" } };
+
+    const polyLayer = new L.Proj.GeoJSON(geojson, {
+      style: {
+        color: "#1f2937",
+        weight: 1,
+        fillColor: "#60a5fa",
+        fillOpacity: 0.25,
+      },
+      onEachFeature: (feature, layer) => {
+        layer.on({
+          mouseover: (e) => {
+            e.target.setStyle({ weight: 2, fillOpacity: 0.35 });
+            e.target.bringToFront();
+          },
+          mouseout: (e) => {
+            polyLayer.resetStyle(e.target);
+          },
+        });
+      },
+    }).addTo(map_spilhaus);
+
+    // 可选：视图贴合
+    // const b = polyLayer.getBounds();
+    // if (b.isValid()) map_spilhaus.fitBounds(b, { maxZoom: 3, padding: [10,10] });
+  })
+  .catch((err) => console.error("GeoJSON load failed:", err));
+
+fetch("assets/Ghana.geojson", { cache: "no-cache" })
+  .then((r) => {
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json();
+  })
+  .then((geojson) => {
+    geojson.crs = { type: "name", properties: { name: "ESRI:54099" } };
+
+    const polyLayer = new L.Proj.GeoJSON(geojson, {
+      style: {
+        color: "#1f2937",
+        weight: 1,
+        fillColor: "#60a5fa",
+        fillOpacity: 0.25,
+      },
+      onEachFeature: (feature, layer) => {
+        layer.on({
+          mouseover: (e) => {
+            e.target.setStyle({ weight: 2, fillOpacity: 0.35 });
+            e.target.bringToFront();
+          },
+          mouseout: (e) => {
+            polyLayer.resetStyle(e.target);
+          },
+        });
+      },
+    }).addTo(map_spilhaus);
+
+    // 可选：视图贴合
+    // const b = polyLayer.getBounds();
+    // if (b.isValid()) map_spilhaus.fitBounds(b, { maxZoom: 3, padding: [10,10] });
+  })
+  .catch((err) => console.error("GeoJSON load failed:", err));
+
+fetch("assets/Mali.geojson", { cache: "no-cache" })
+  .then((r) => {
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json();
+  })
+  .then((geojson) => {
+    geojson.crs = { type: "name", properties: { name: "ESRI:54099" } };
+
+    const polyLayer = new L.Proj.GeoJSON(geojson, {
+      style: {
+        color: "#1f2937",
+        weight: 1,
+        fillColor: "#60a5fa",
+        fillOpacity: 0.25,
+      },
+      onEachFeature: (feature, layer) => {
+        layer.on({
+          mouseover: (e) => {
+            e.target.setStyle({ weight: 2, fillOpacity: 0.35 });
+            e.target.bringToFront();
+          },
+          mouseout: (e) => {
+            polyLayer.resetStyle(e.target);
+          },
+        });
+      },
+    }).addTo(map_spilhaus);
+
+    // 可选：视图贴合
+    // const b = polyLayer.getBounds();
+    // if (b.isValid()) map_spilhaus.fitBounds(b, { maxZoom: 3, padding: [10,10] });
+  })
+  .catch((err) => console.error("GeoJSON load failed:", err));
+
+fetch("assets/Mozambique.geojson", { cache: "no-cache" })
+  .then((r) => {
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json();
+  })
+  .then((geojson) => {
+    geojson.crs = { type: "name", properties: { name: "ESRI:54099" } };
+
+    const polyLayer = new L.Proj.GeoJSON(geojson, {
+      style: {
+        color: "#1f2937",
+        weight: 1,
+        fillColor: "#60a5fa",
+        fillOpacity: 0.25,
+      },
+      onEachFeature: (feature, layer) => {
+        layer.on({
+          mouseover: (e) => {
+            e.target.setStyle({ weight: 2, fillOpacity: 0.35 });
+            e.target.bringToFront();
+          },
+          mouseout: (e) => {
+            polyLayer.resetStyle(e.target);
+          },
+        });
+      },
+    }).addTo(map_spilhaus);
+
+    // 可选：视图贴合
+    // const b = polyLayer.getBounds();
+    // if (b.isValid()) map_spilhaus.fitBounds(b, { maxZoom: 3, padding: [10,10] });
+  })
+  .catch((err) => console.error("GeoJSON load failed:", err));
+
+fetch("assets/Nigeria.geojson", { cache: "no-cache" })
+  .then((r) => {
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json();
+  })
+  .then((geojson) => {
+    geojson.crs = { type: "name", properties: { name: "ESRI:54099" } };
+
+    const polyLayer = new L.Proj.GeoJSON(geojson, {
+      style: {
+        color: "#1f2937",
+        weight: 1,
+        fillColor: "#60a5fa",
+        fillOpacity: 0.25,
+      },
+      onEachFeature: (feature, layer) => {
+        layer.on({
+          mouseover: (e) => {
+            e.target.setStyle({ weight: 2, fillOpacity: 0.35 });
+            e.target.bringToFront();
+          },
+          mouseout: (e) => {
+            polyLayer.resetStyle(e.target);
+          },
+        });
+      },
+    }).addTo(map_spilhaus);
+
+    // 可选：视图贴合
+    // const b = polyLayer.getBounds();
+    // if (b.isValid()) map_spilhaus.fitBounds(b, { maxZoom: 3, padding: [10,10] });
+  })
+  .catch((err) => console.error("GeoJSON load failed:", err));
+
+fetch("assets/Senegal.geojson", { cache: "no-cache" })
+  .then((r) => {
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json();
+  })
+  .then((geojson) => {
+    geojson.crs = { type: "name", properties: { name: "ESRI:54099" } };
+
+    const polyLayer = new L.Proj.GeoJSON(geojson, {
+      style: {
+        color: "#1f2937",
+        weight: 1,
+        fillColor: "#60a5fa",
+        fillOpacity: 0.25,
+      },
+      onEachFeature: (feature, layer) => {
+        layer.on({
+          mouseover: (e) => {
+            e.target.setStyle({ weight: 2, fillOpacity: 0.35 });
+            e.target.bringToFront();
+          },
+          mouseout: (e) => {
+            polyLayer.resetStyle(e.target);
+          },
+        });
+      },
+    }).addTo(map_spilhaus);
+
+    // 可选：视图贴合
+    // const b = polyLayer.getBounds();
+    // if (b.isValid()) map_spilhaus.fitBounds(b, { maxZoom: 3, padding: [10,10] });
+  })
+  .catch((err) => console.error("GeoJSON load failed:", err));
+
+fetch("assets/South_Africa.geojson", { cache: "no-cache" })
+  .then((r) => {
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json();
+  })
+  .then((geojson) => {
     geojson.crs = { type: "name", properties: { name: "ESRI:54099" } };
 
     const polyLayer = new L.Proj.GeoJSON(geojson, {

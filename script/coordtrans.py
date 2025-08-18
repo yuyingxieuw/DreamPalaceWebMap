@@ -1,16 +1,7 @@
 from pyproj import CRS, Transformer
 import json 
 
-# print(pyproj.__version__)
-# print(pyproj.proj_version_str)
-
-# crs_54099 = CRS.from_proj4("+proj=spilhaus +lat_0=-49.56371678 +lon_0=66.94970198 +azi=40.17823482 +k_0=1.4142135623731 +rot=45 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs")
-# crs_3857 = CRS.from_epsg("3857")
-# crs_4326 = CRS.from_epsg("4326")
-
-# print(crs_3857.to_wkt)
-# print(crs_4326.to_wkt)
-
+# this is the code transform coord data from 4326 to spilhaus
 def transform(in_path, out_path):
     crs_54099 = CRS.from_proj4("+proj=spilhaus +lat_0=-49.56371678 +lon_0=66.94970198 +azi=40.17823482 +k_0=1.4142135623731 +rot=45 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs")
     crs_4326 = CRS.from_epsg(4326)
