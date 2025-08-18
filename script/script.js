@@ -1,6 +1,6 @@
 class WebMapApp {
   constructor() {
-    this.map = null;
+    this.mapManager = new MapManager(this);
     this.layerManager = new LayerManager(this);
     this.uiManager = new UIManager(this);
     this.searchManager = new SearchManager(this);
@@ -8,7 +8,182 @@ class WebMapApp {
   }
 
   initialize() {
-    this.initMap();
+    this.mapManager.registerCRS();
+    this.mapManager.createSpilhaus();
+    this.mapManager.activate("spilhaus");
+    // this.mapManager.initMapWithWGS();
+    // this.mapManager.addBaseTiles();
+    // this.mapManager.guardMapRestes();
+    this.layerManager.loadForProjection("spilhaus");
+  }
+}
+
+class MapManager {
+  constructor(app) {
+    this.app = app;
+    this.projCode = "ESRI:54099";
+    this.map_spilhaus = null;
+    this.map_wgs = null;
+    this.spilhausCRS = null;
+    this.countryLayers = [];
+  }
+
+  registerCRS() {
+    proj4.defs(
+      "ESRI:54099",
+      "+proj=moll +lon_0=0 +x_0=0 +y_0=0 +units=m +datum=WGS84 +no_defs"
+    );
+  }
+
+  buildCRS() {
+    const minx = -16857702.71589949;
+    const miny = -17212325.962645144;
+    const maxx = 17289853.05215329;
+    const maxy = 16935229.805407636;
+
+    const resolutions = [
+      213422.22355032988708, // z=0
+      106711.11177516494354, // z=1
+      53355.55588758247177, // z=2
+      26677.77794379123588, // z=3
+    ];
+
+    this.spilhausCRS = new L.Proj.CRS(
+      this.projCode,
+      proj4.defs(this.projCode),
+      {
+        origin: [minx, maxy], // 左上角 (minx, maxy)
+        resolutions, // 与 XML 完全一致
+        bounds: L.bounds([minx, miny], [maxx, maxy]), // 限制平移
+      }
+    );
+  }
+
+  initMapWithSpilhaus() {
+    this.map_spilhaus = L.map("mapSpilhaus", {
+      crs: this.spilhausCRS,
+      center: [0, 0],
+      zoom: 2,
+      minZoom: 0,
+      maxZoom: 3,
+      scrollWheelZoom: "center",
+      touchZoom: "center",
+      doubleClickZoom: "center",
+      zoomSnap: 1,
+      zoomDelta: 1,
+      inertia: false,
+    });
+  }
+
+  addBaseTiles() {
+    //this is baseTile for spilhaus
+    L.tileLayer("tiles8.12/{z}/{x}/{y}.png", {
+      tms: true,
+      tileSize: 256,
+      minZoom: 0,
+      maxZoom: 3,
+      minNativeZoom: 3,
+      maxNativeZoom: 3,
+      noWrap: true,
+      updateWhenZooming: true,
+      keepBuffer: 2,
+    }).addTo(this.map_spilhaus);
+  }
+
+  loadSpilhausGeoJSON() {
+    const country_spil = [
+      "Brazil",
+      "Burkina_Faso",
+      "Cameroon",
+      "Ghana",
+      "Mali",
+      "Mozambique",
+      "Nigeria",
+      "Senegal",
+      "South_Africa",
+    ];
+
+    const style = {
+      color: "#1f2937",
+      weight: 1,
+      fillColor: "#60a5fa",
+      fillOpacity: 0.25,
+      pane: "worldPane",
+    };
+
+    country_spil.map(async (country) => {
+      fetch(`assets/${country.replace(/\s+/g, "_")}.geojson`, {
+        cache: "no-cache",
+      })
+        .then((r) => {
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          return r.json();
+        })
+        .then((geojson) => {
+          geojson.crs = { type: "name", properties: { name: "ESRI:54099" } };
+          const polyLayer = new L.Proj.GeoJSON(geojson, {
+            style: {
+              color: "#1f2937",
+              weight: 1,
+              fillColor: "#60a5fa",
+              fillOpacity: 0.25,
+            },
+            onEachFeature: (feature, layer) => {
+              layer.on({
+                mouseover: (e) => {
+                  e.target.setStyle({ weight: 2, fillOpacity: 0.35 });
+                  e.target.bringToFront();
+                },
+                mouseout: (e) => {
+                  polyLayer.resetStyle(e.target);
+                },
+                click: (e) => {
+                  initMapWithWGS(country);
+                },
+              });
+            },
+          }).addTo(this.app.mapSpilhaus);
+        })
+        .catch((err) => console.error("GeoJSON load failed:", err));
+    });
+  }
+
+  initMapWithWGS(country) {
+    if (this.map_wgs) {
+      this.map_wgs.remove();
+    }
+    const country_centroid = {
+      // prettier-ignore
+      "Brazil": [-7.535994, -72.340427],
+      // prettier-ignore
+      "Burkina_Faso": [11.726473, -5.308822],
+      // prettier-ignore
+      "Cameroon": [5.810411, 9.631660],
+      // prettier-ignore
+      "Ghana": [7.678434, -2.749734],
+      // prettier-ignore
+      "Mali": [18.191814, -5.811439],
+      // prettier-ignore
+      "Mozambique": [-18.877222, 32.659506],
+      // prettier-ignore
+      "Nigeria": [9.039145, 2.763425],
+      // prettier-ignore
+      "Senegal": [14.781868, -17.375992],
+      // prettier-ignore
+      "South_Africa": [-28.898819, 17.063372],
+      // prettier-ignore
+      "uk": [54.091472, -13.224016],
+      // prettier-ignore
+      "us": [41.599380, -105.308336],
+    };
+    this.map_wgs = L.map("mapWGS", {
+      center: country_centroid[country],
+      zoom: 2,
+      scrollWheelZoom: true,
+      doubleClickZoom: true,
+    });
+  }
+  setViewWGS() {
     this.layerManager.loadAllLayers();
     this.searchManager.initSearchBar();
     this.uiManager.initSideBar();
@@ -16,14 +191,6 @@ class WebMapApp {
     this.eventManager.attachLayerControl();
     this.eventManager.attachZoomHandler();
     this.eventManager.attachDrawButtons();
-  }
-
-  initMap() {
-    this.map = L.map("map").setView([17.812196, -50.188083], 2);
-  }
-
-  setViewHome() {
-    this.map.setView([17.812196, -50.188083], 3);
   }
 }
 
