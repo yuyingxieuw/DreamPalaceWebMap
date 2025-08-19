@@ -12,7 +12,7 @@ class WebMapApp {
     this.mapManager.buildCRS();
     this.mapManager.createSpilhaus();
     this.mapManager.addSpilhausTiles();
-    this.mapManager.loadSpilhausGeoJSON();
+    this.mapManager.loadSpilhausCountries();
     this.mapManager.activate("spilhaus");
     this.layerManager.loadForProjection("spilhaus");
   }
@@ -31,7 +31,7 @@ class MapManager {
     this.mapSpilhaus = null;
     this.mapWgs = null;
     this.active = null; // 'spilhaus'|'wgs' // for _emitprojectionchange function
-    this.activateCountry = null; // for _emitprojectionchange function
+    this.activeCountry = null; // for _emitprojectionchange function
     // layer const
     this.spilhausTiles = null;
     this.spilhausCountryLayers = [];
@@ -153,7 +153,6 @@ class MapManager {
       weight: 1,
       fillColor: "#60a5fa",
       fillOpacity: 0.25,
-      pane: "worldPane",
     };
 
     this.spilhausCountryFiles.forEach((key) => {
@@ -183,7 +182,7 @@ class MapManager {
               });
             },
           }).addTo(this.mapSpilhaus);
-          this.spilhausCountryLayers.push(layer);
+          this.spilhausCountryLayers.push(polyLayer);
         })
         .catch((err) =>
           console.error(`[Spilhaus] GeoJSON load failed: ${key}`, err)
@@ -191,7 +190,7 @@ class MapManager {
     });
   }
 
-  active(mode, opts = {}) {
+  activate(mode, opts = {}) {
     if (mode === "spilhaus") {
       this._show(this.containerSpilhaus);
       this._hide(this.containerWgs);
@@ -234,8 +233,11 @@ class MapManager {
         `[WGS] Missing centroid for ${countryKey}, fallback to [0,0].`
       );
     }
-    this.activateCountry = countryKey;
-    this.active("wgs", { center: center ?? [0, 0], zoom: this.wgsDefaultZoom });
+    this.activeCountry = countryKey;
+    this.activate("wgs", {
+      center: center ?? [0, 0],
+      zoom: this.wgsDefaultZoom,
+    });
   }
 
   getActiveMap() {
@@ -323,16 +325,16 @@ class LayerManager {
 
   clearAll() {
     const map = this.getMap();
-    [this.palace, this.city, this.world, this.openStreetMap].foreach((lyr) => {
+    [this.palace, this.city, this.world, this.openStreetMap].forEach((lyr) => {
       if (lyr && map && map.hasLayer(lyr)) map.removeLayer(lyr);
     });
-    this.palace = this.city = this.world = this.openStreetmap = null;
+    this.palace = this.city = this.world = this.openStreetMap = null;
     this.city_list = [];
     this.country_list = [];
   }
 
   loadBasemapWGS() {
-    const map = this.getMap;
+    const map = this.getMap();
     if (!map) return;
     this.openStreetMap = L.tileLayer(
       "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -367,7 +369,7 @@ class LayerManager {
     const map = this.getMap();
     if (!map) return;
     if (this.palace) {
-      this.palace.removeLayer(this.palace);
+      map.removeLayer(this.palace);
     }
     this.palace = new L.GeoJSON.AJAX("assets/Address_US.geojson", {
       pointToLayer: this.getPointStyleFunction(),
@@ -377,7 +379,7 @@ class LayerManager {
 
   getPointStyleFunction() {
     const selected =
-      document.querySelector('input[name="choosestyle"]:checked').id ||
+      document.querySelector('input[name="choosestyle"]:checked')?.id ||
       "pointStyle1";
     // console.log(selected);
     return selected === "pointStyle1"
@@ -413,7 +415,7 @@ class LayerManager {
       this.app.uiManager.handleExploreAreaClick();
       $("#explore_area_content").html(message);
       // can add setview but it's too much move
-      this.app.map.setView(latlng, 9);
+      this.app.mapManager.setView(latlng, 9);
     });
     return marker;
   }
@@ -519,7 +521,7 @@ class LayerManager {
   loadEmpirePolygon() {}
 
   loadWorldPolygon() {
-    const map = getMap();
+    const map = this.getMap();
     if (!map) return;
     const country_array = [
       "Brazil",
@@ -596,7 +598,7 @@ class UIManager {
     this.sidebar = null;
 
     window.addEventListener("projectionchange", () => {
-      this.initSideBar;
+      this.initSideBar();
     });
   }
 
@@ -671,7 +673,7 @@ class UIManager {
     this.hideElement("#explore_area_content");
     this.hideElement("#palace_history_content");
     this.hideElement("#picture_more_content");
-    this.app.map.setView([17.812196, -50.188083], 2);
+    this.app.mapManager.setView([17.812196, -50.188083], 2);
   }
 
   handleDataQueryClick() {
@@ -800,7 +802,7 @@ class SearchManager {
     this.poliLayer = L.featureGroup([
       this.app.layerManager.city,
       this.app.layerManager.world,
-    ]).filter(Boolean);
+    ]);
 
     this.searchControl = new L.Control.Search({
       layer: this.poliLayer,
