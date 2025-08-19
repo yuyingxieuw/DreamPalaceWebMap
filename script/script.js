@@ -251,7 +251,7 @@ class MapManager {
     m.setView(latlng, z, options);
   }
 
-  guardMapRestes() {}
+  guardMapReset() {}
 
   _emitProjectionChange() {
     window.dispatchEvent(
@@ -459,7 +459,7 @@ class LayerManager {
       $("#explore_area_content").html(message);
       // can add setview but it's too much move
       // const location = latlng;
-      // this.app.map.setView(location, 8);
+      // this.app.mapManager.setView(location, 8);
     });
     return marker;
   }
@@ -810,11 +810,11 @@ class SearchManager {
       marker: false,
       collapsed: false,
       position: "topright",
-      moveToLocation: (latlng, title, map) => {
-        map.setView(latlng, 8);
+      moveToLocation: (latlng) => {
+        this.app.mapManager.setView(latlng, 8);
       },
     });
-    map.addControl(searchControl);
+    map.addControl(this.searchControl);
   }
 
   updateNameList() {}
