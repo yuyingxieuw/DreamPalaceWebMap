@@ -779,6 +779,15 @@ class UIManager {
       .querySelector("#picture_more")
       .addEventListener("click", this.handlePictureMoreClick.bind(this));
   }
+
+  backtoocean() {
+    const el = document.querySelector("#back");
+    if (!el) return;
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      this.app.mapManager.activate("spilhaus", { center: [0, 0], zoom: 2 });
+    });
+  }
 }
 
 class SearchManager {

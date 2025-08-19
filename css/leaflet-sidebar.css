@@ -397,3 +397,10 @@
   display: block;
   height: 300px;
 }
+
+#backtospilhaus {
+  display: block;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
