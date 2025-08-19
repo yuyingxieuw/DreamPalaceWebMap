@@ -16,24 +16,22 @@ body {
 
 #mapSpilhaus {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
+  inset: 0;
   height: 100%;
   width: 100%;
   z-index: 0;
+  pointer-events: auto;
+  display: block;
 }
 
 #mapWgs {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
+  inset: 0;
   height: 100%;
   width: 100%;
   z-index: 0;
+  pointer-events: none;
+  display: none;
 }
 
 .ui-autocomplete {
@@ -66,4 +64,14 @@ body {
   font-size: 14px;
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
   z-index: 1000;
+}
+
+.leaflet-interactive {
+  pointer-events: auto;
+}
+.leaflet-tile-pane {
+  z-index: 200;
+}
+.leaflet-overlay-pane {
+  z-index: 400;
 }

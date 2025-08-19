@@ -23,7 +23,7 @@ class MapManager {
     this.app = app;
     // DOM
     this.containerSpilhaus = "mapSpilhaus";
-    this.containerWgs = "mapWGS";
+    this.containerWgs = "mapWgs";
     // projection const
     this.projCode = "ESRI:54099";
     this.spilhausCRS = null;
@@ -167,11 +167,13 @@ class MapManager {
           geojson.crs = { type: "name", properties: { name: this.projCode } };
           const polyLayer = new L.Proj.GeoJSON(geojson, {
             style,
+            interactive: true,
             onEachFeature: (_, layer) => {
               layer.on({
                 mouseover: (e) => {
                   e.target.setStyle({ weight: 2, fillOpacity: 0.35 });
                   e.target.bringToFront();
+                  console.log("Mouseover::", e);
                 },
                 mouseout: (e) => {
                   polyLayer.resetStyle(e.target);
@@ -196,34 +198,41 @@ class MapManager {
       this._hide(this.containerWgs);
       this.active = "spilhaus";
       this.activeCountry = null;
+      // leaflet rest
+      requestAnimationFrame(() => {
+        if (this.mapSpilhaus) this.mapSpilhaus.invalidateSize();
+      });
 
       if (opts.center || typeof opts.zoom === "number") {
         this.setView(
           opts.center ?? this.spilhausStart.center,
           opts.zoom ?? this.spilhausStart.zoom
         );
-        this._emitProjectionChange();
-        return;
       }
-
-      if (mode === "wgs") {
-        this._ensureWgsCreated({
-          center: opts.center,
-          zoom: opts.zoom ?? this.wgsDefaultZoom,
-        });
-        this._hide(this.containerSpilhaus);
-        this._show(this.containerWgs);
-        this.active = "wgs";
-
-        if (opts.center || typeof opts.zoom === "number") {
-          this.setView(opts.center, opts.zoom ?? this.wgsDefaultZoom);
-        }
-        this._emitProjectionChange();
-        return;
-      }
-
-      console.warn(`Unknown projection mode ${mode}`);
+      this._emitProjectionChange();
+      return;
     }
+
+    if (mode === "wgs") {
+      this._ensureWgsCreated({
+        center: opts.center,
+        zoom: opts.zoom ?? this.wgsDefaultZoom,
+      });
+      this._hide(this.containerSpilhaus);
+      this._show(this.containerWgs);
+      this.active = "wgs";
+      requestAnimationFrame(() => {
+        if (this.mapSpilhaus) this.mapWgs.invalidateSize();
+      });
+
+      if (opts.center || typeof opts.zoom === "number") {
+        this.setView(opts.center, opts.zoom ?? this.wgsDefaultZoom);
+      }
+      this._emitProjectionChange();
+      return;
+    }
+
+    console.warn(`Unknown projection mode ${mode}`);
   }
 
   _switchToWgsUsingCentroid(countryKey) {
@@ -582,11 +591,12 @@ class LayerManager {
       onEachFeature: (feature, layer) => {
         const name = feature.properties.NAME;
         this.country_list.push({ name, layer });
-        if (country_array.includes(name)) {
-          layer.on("click", () => {
-            this.app.mapManager.setView(centroid[name], 5);
-          });
-        }
+        // 点击国家移动禁止
+        // if (country_array.includes(name)) {
+        //   layer.on("click", () => {
+        //     this.app.mapManager.setView(centroid[name], 5);
+        //   });
+        // }
       },
     }).addTo(map);
   }
