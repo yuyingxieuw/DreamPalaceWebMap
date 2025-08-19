@@ -377,6 +377,7 @@ class LayerManager {
   reloadPalaceLayer() {
     const map = this.getMap();
     if (!map) return;
+    if ((map = "spilhaus")) return;
     if (this.palace) {
       map.removeLayer(this.palace);
     }
