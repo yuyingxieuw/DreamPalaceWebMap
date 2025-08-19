@@ -37,18 +37,18 @@ class MapManager {
     this.spilhausCountryLayers = [];
     // setveiw
     this.spilhausStart = { center: [0, -150], zoom: 2 };
-    this.wgsDefaultZoom = 5;
+    this.wgsDefaultZoom = 4;
     // country centroid
     this.countryCentroid = {
       Brazil: [-7.535994, -72.340427],
-      Burkina_Faso: [11.726473, -5.308822],
-      Cameroon: [5.810411, 9.63166],
-      Ghana: [7.678434, -2.749734],
-      Mali: [18.191814, -5.811439],
-      Mozambique: [-18.877222, 32.659506],
+      Burkina_Faso: [11.726473, -25.308822],
+      Cameroon: [5.810411, 0.63166],
+      Ghana: [7.678434, -22.749734],
+      Mali: [18.191814, -15.811439],
+      Mozambique: [-18.877222, 0.659506],
       Nigeria: [9.039145, 2.763425],
       Senegal: [14.781868, -17.375992],
-      South_Africa: [-28.898819, 17.063372],
+      South_Africa: [-28.898819, -7.063372],
       United_Kingdom: [54.091472, -3.224016],
       United_States_of_America: [41.59938, -105.308336],
     };
@@ -134,13 +134,16 @@ class MapManager {
     if (this.mapWgs) return;
     this.mapWgs = L.map(this.containerWgs, {
       center,
-      zoom,
+      zoom: Math.max(zoom, 4),
+      minZoom: 4,
+      maxZoom: 19,
       scrollWheelZoom: true,
       doubleClickZoom: true,
       zoomSnap: 1,
     });
 
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      minZoom: 4,
       maxZoom: 19,
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -321,6 +324,10 @@ class LayerManager {
     return this.app.mapManager.getActiveMap();
   }
 
+  getProj() {
+    return this.app.mapManager.active;
+  }
+
   _initPanesWGS() {
     const map = this.getMap();
     if (!map) return;
@@ -376,8 +383,8 @@ class LayerManager {
 
   reloadPalaceLayer() {
     const map = this.getMap();
-    if (!map) return;
-    if ((map = "spilhaus")) return;
+    const proj = this.getProj();
+    if (!map || proj === "spilhaus") return;
     if (this.palace) {
       map.removeLayer(this.palace);
     }
@@ -425,7 +432,7 @@ class LayerManager {
       this.app.uiManager.handleExploreAreaClick();
       $("#explore_area_content").html(message);
       // can add setview but it's too much move
-      this.app.mapManager.setView(latlng, 9);
+      //this.app.mapManager.setView(latlng, 9);
     });
     return marker;
   }
@@ -617,6 +624,10 @@ class UIManager {
     return this.app.mapManager.getActiveMap();
   }
 
+  getCountry() {
+    return this.app.mapManager.activeCountry;
+  }
+
   initSideBar() {
     const map = this.getMap();
     if (!map) return;
@@ -686,7 +697,6 @@ class UIManager {
     this.hideElement("#explore_area_content");
     this.hideElement("#palace_history_content");
     this.hideElement("#picture_more_content");
-    this.app.mapManager.setView([17.812196, -50.188083], 2);
   }
 
   handleDataQueryClick() {
