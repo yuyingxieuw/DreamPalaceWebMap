@@ -145,7 +145,13 @@
             <!-- Data Query Content Part -->
             <div id = data_container>
                 <div id = "query_statistics_container">
-                    <div id = "data_query_window"></div>
+                    <div id = "data_query_window">
+                        <form id="choose_style">
+                            <div>Show Palace Data Based on:</div>
+                            <label> <input type="radio" id="pointStyle1" name = "choosestyle" checked> Current Status </label>
+                            <label> <input type="radio" id="pointStyle2" name = "choosestyle"> Have Specific Location data </label>
+                        </form>
+                    </div>
                 </div>
                 <div class = "col-xs-12 line"></div>
                 <div id = "data_operation_container">
@@ -174,7 +180,7 @@
                 </div>
             </div> 
         </div>
-            <!-- Need to be delete -->
+            <!-- Need to be deleted -->
             <div class="sidebar-pane" id="profile">
                 <h1 class="sidebar-header text-center">Data Queer<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
             </div>
@@ -188,13 +194,7 @@
             </div>
         </div>
     </div>
-    
-    <!-- Choose Palace Point Styles -->
-    <form id="choose_style">
-            <div>Show Palace Data Based on:</div>
-            <label> <input type="radio" id="pointStyle1" name = "choosestyle" checked> Current Status </label>
-            <label> <input type="radio" id="pointStyle2" name = "choosestyle"> Have Specific Location data </label>
-    </form>
+
 
     <!-- map part -->
     <div class = "map-container">

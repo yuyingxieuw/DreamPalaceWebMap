@@ -105,7 +105,7 @@ class MapManager {
       crs: this.spilhausCRS,
       center: this.spilhausStart.center,
       zoom: this.spilhausStart.zoom,
-      minZoom: 0,
+      minZoom: 2,
       maxZoom: 3,
       scrollWheelZoom: "center",
       touchZoom: "center",
@@ -120,7 +120,7 @@ class MapManager {
     this.spilhausTiles = L.tileLayer("tiles8.12/{z}/{x}/{y}.png", {
       tms: true,
       tileSize: 256,
-      minZoom: 0,
+      minZoom: 2,
       maxZoom: 3,
       minNativeZoom: 3,
       maxNativeZoom: 3,
