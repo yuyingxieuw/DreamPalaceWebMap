@@ -36,7 +36,7 @@ class MapManager {
     this.spilhausTiles = null;
     this.spilhausCountryLayers = [];
     // setveiw
-    this.spilhausStart = { center: [0, 0], zoom: 2 };
+    this.spilhausStart = { center: [0, -150], zoom: 2 };
     this.wgsDefaultZoom = 5;
     // country centroid
     this.countryCentroid = {
@@ -787,7 +787,10 @@ class UIManager {
     if (!el) return;
     el.addEventListener("click", (e) => {
       e.preventDefault();
-      this.app.mapManager.activate("spilhaus", { center: [0, 0], zoom: 2 });
+      this.app.mapManager.activate(
+        "spilhaus",
+        this.app.mapManager.spilhausStart
+      );
     });
   }
 }
