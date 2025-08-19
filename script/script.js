@@ -9,11 +9,11 @@ class WebMapApp {
 
   initialize() {
     this.mapManager.registerCRS();
+    this.mapManager.buildCRS();
     this.mapManager.createSpilhaus();
+    this.mapManager.addSpilhausTiles();
+    this.mapManager.loadSpilhausGeoJSON();
     this.mapManager.activate("spilhaus");
-    // this.mapManager.initMapWithWGS();
-    // this.mapManager.addBaseTiles();
-    // this.mapManager.guardMapRestes();
     this.layerManager.loadForProjection("spilhaus");
   }
 }
@@ -21,11 +21,49 @@ class WebMapApp {
 class MapManager {
   constructor(app) {
     this.app = app;
+    // DOM
+    this.containerSpilhaus = "mapSpilhaus";
+    this.containerWgs = "mapWGS";
+    // projection const
     this.projCode = "ESRI:54099";
-    this.map_spilhaus = null;
-    this.map_wgs = null;
     this.spilhausCRS = null;
-    this.countryLayers = [];
+    // map const
+    this.mapSpilhaus = null;
+    this.mapWgs = null;
+    this.active = null; // 'spilhaus'|'wgs' // for _emitprojectionchange function
+    this.activateCountry = null; // for _emitprojectionchange function
+    // layer const
+    this.spilhausTiles = null;
+    this.spilhausCountryLayers = [];
+    // setveiw
+    this.spilhausStart = { center: [0, 0], zoom: 2 };
+    this.wgsDefaultZoom = 5;
+    // country centroid
+    this.countryCentroid = {
+      Brazil: [-7.535994, -72.340427],
+      Burkina_Faso: [11.726473, -5.308822],
+      Cameroon: [5.810411, 9.63166],
+      Ghana: [7.678434, -2.749734],
+      Mali: [18.191814, -5.811439],
+      Mozambique: [-18.877222, 32.659506],
+      Nigeria: [9.039145, 2.763425],
+      Senegal: [14.781868, -17.375992],
+      South_Africa: [-28.898819, 17.063372],
+      United_Kingdom: [54.091472, -3.224016],
+      United_States_of_America: [41.59938, -105.308336],
+    };
+    this.spilhausCountryFiles = [
+      "Brazil",
+      "Burkina_Faso",
+      "Cameroon",
+      "Ghana",
+      "Mali",
+      "Mozambique",
+      "Nigeria",
+      "Senegal",
+      "South_Africa",
+      // need to add US and UK
+    ];
   }
 
   registerCRS() {
@@ -59,11 +97,14 @@ class MapManager {
     );
   }
 
-  initMapWithSpilhaus() {
-    this.map_spilhaus = L.map("mapSpilhaus", {
+  createSpilhaus() {
+    this._hide(this.containerWgs);
+    this._show(this.containerSpilhaus);
+
+    this.mapSpilhaus = L.map(this.containerSpilhaus, {
       crs: this.spilhausCRS,
-      center: [0, 0],
-      zoom: 2,
+      center: this.spilhausStart.center,
+      zoom: this.spilhausStart.zoom,
       minZoom: 0,
       maxZoom: 3,
       scrollWheelZoom: "center",
@@ -75,9 +116,8 @@ class MapManager {
     });
   }
 
-  addBaseTiles() {
-    //this is baseTile for spilhaus
-    L.tileLayer("tiles8.12/{z}/{x}/{y}.png", {
+  addSpilhausTiles() {
+    this.spilhausTiles = L.tileLayer("tiles8.12/{z}/{x}/{y}.png", {
       tms: true,
       tileSize: 256,
       minZoom: 0,
@@ -87,22 +127,27 @@ class MapManager {
       noWrap: true,
       updateWhenZooming: true,
       keepBuffer: 2,
-    }).addTo(this.map_spilhaus);
+    }).addTo(this.mapSpilhaus);
   }
 
-  loadSpilhausGeoJSON() {
-    const country_spil = [
-      "Brazil",
-      "Burkina_Faso",
-      "Cameroon",
-      "Ghana",
-      "Mali",
-      "Mozambique",
-      "Nigeria",
-      "Senegal",
-      "South_Africa",
-    ];
+  _ensureWgsCreated({ center = [0, 0], zoom = this.wgsDefaultZoom } = {}) {
+    if (this.mapWgs) return;
+    this.mapWgs = L.map(this.containerWgs, {
+      center,
+      zoom,
+      scrollWheelZoom: true,
+      doubleClickZoom: true,
+      zoomSnap: 1,
+    });
 
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(this.mapWgs);
+  }
+
+  loadSpilhausCountries() {
     const style = {
       color: "#1f2937",
       weight: 1,
@@ -111,8 +156,8 @@ class MapManager {
       pane: "worldPane",
     };
 
-    country_spil.map(async (country) => {
-      fetch(`assets/${country.replace(/\s+/g, "_")}.geojson`, {
+    this.spilhausCountryFiles.forEach((key) => {
+      fetch(`assets/${key}.geojson`, {
         cache: "no-cache",
       })
         .then((r) => {
@@ -120,15 +165,10 @@ class MapManager {
           return r.json();
         })
         .then((geojson) => {
-          geojson.crs = { type: "name", properties: { name: "ESRI:54099" } };
+          geojson.crs = { type: "name", properties: { name: this.projCode } };
           const polyLayer = new L.Proj.GeoJSON(geojson, {
-            style: {
-              color: "#1f2937",
-              weight: 1,
-              fillColor: "#60a5fa",
-              fillOpacity: 0.25,
-            },
-            onEachFeature: (feature, layer) => {
+            style,
+            onEachFeature: (_, layer) => {
               layer.on({
                 mouseover: (e) => {
                   e.target.setStyle({ weight: 2, fillOpacity: 0.35 });
@@ -137,60 +177,102 @@ class MapManager {
                 mouseout: (e) => {
                   polyLayer.resetStyle(e.target);
                 },
-                click: (e) => {
-                  initMapWithWGS(country);
+                click: () => {
+                  this._switchToWgsUsingCentroid(key);
                 },
               });
             },
-          }).addTo(this.app.mapSpilhaus);
+          }).addTo(this.mapSpilhaus);
+          this.spilhausCountryLayers.push(layer);
         })
-        .catch((err) => console.error("GeoJSON load failed:", err));
+        .catch((err) =>
+          console.error(`[Spilhaus] GeoJSON load failed: ${key}`, err)
+        );
     });
   }
 
-  initMapWithWGS(country) {
-    if (this.map_wgs) {
-      this.map_wgs.remove();
+  active(mode, opts = {}) {
+    if (mode === "spilhaus") {
+      this._show(this.containerSpilhaus);
+      this._hide(this.containerWgs);
+      this.active = "spilhaus";
+      this.activeCountry = null;
+
+      if (opts.center || typeof opts.zoom === "number") {
+        this.setView(
+          opts.center ?? this.spilhausStart.center,
+          opts.zoom ?? this.spilhausStart.zoom
+        );
+        this._emitProjectionChange();
+        return;
+      }
+
+      if (mode === "wgs") {
+        this._ensureWgsCreated({
+          center: opts.center,
+          zoom: opts.zoom ?? this.wgsDefaultZoom,
+        });
+        this._hide(this.containerSpilhaus);
+        this._show(this.containerWgs);
+        this.active = "wgs";
+
+        if (opts.center || typeof opts.zoom === "number") {
+          this.setView(opts.center, opts.zoom ?? this.wgsDefaultZoom);
+        }
+        this._emitProjectionChange();
+        return;
+      }
+
+      console.warn(`Unknown projection mode ${mode}`);
     }
-    const country_centroid = {
-      // prettier-ignore
-      "Brazil": [-7.535994, -72.340427],
-      // prettier-ignore
-      "Burkina_Faso": [11.726473, -5.308822],
-      // prettier-ignore
-      "Cameroon": [5.810411, 9.631660],
-      // prettier-ignore
-      "Ghana": [7.678434, -2.749734],
-      // prettier-ignore
-      "Mali": [18.191814, -5.811439],
-      // prettier-ignore
-      "Mozambique": [-18.877222, 32.659506],
-      // prettier-ignore
-      "Nigeria": [9.039145, 2.763425],
-      // prettier-ignore
-      "Senegal": [14.781868, -17.375992],
-      // prettier-ignore
-      "South_Africa": [-28.898819, 17.063372],
-      // prettier-ignore
-      "uk": [54.091472, -13.224016],
-      // prettier-ignore
-      "us": [41.599380, -105.308336],
-    };
-    this.map_wgs = L.map("mapWGS", {
-      center: country_centroid[country],
-      zoom: 2,
-      scrollWheelZoom: true,
-      doubleClickZoom: true,
-    });
   }
-  setViewWGS() {
-    this.layerManager.loadAllLayers();
-    this.searchManager.initSearchBar();
-    this.uiManager.initSideBar();
-    this.uiManager.initSidebarEvents();
-    this.eventManager.attachLayerControl();
-    this.eventManager.attachZoomHandler();
-    this.eventManager.attachDrawButtons();
+
+  _switchToWgsUsingCentroid(countryKey) {
+    const center = this.countryCentroid[countryKey];
+    if (!center) {
+      console.warn(
+        `[WGS] Missing centroid for ${countryKey}, fallback to [0,0].`
+      );
+    }
+    this.activateCountry = countryKey;
+    this.active("wgs", { center: center ?? [0, 0], zoom: this.wgsDefaultZoom });
+  }
+
+  getActiveMap() {
+    return this.active === "wgs" ? this.mapWgs : this.mapSpilhaus;
+  }
+
+  setView(latlng, zoom, options) {
+    const m = this.getActiveMap();
+    if (!m || !latlng) return;
+    const z = typeof zoom === "number" ? zoom : m.getZoom();
+    m.setView(latlng, z, options);
+  }
+
+  guardMapRestes() {}
+
+  _emitProjectionChange() {
+    window.dispatchEvent(
+      new CustomEvent("projectionchange", {
+        detail: { projection: this.active, country: this.activeCountry },
+      })
+    );
+  }
+
+  _show(id) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.display = "block";
+      el.style.pointerEvents = "auto";
+    }
+  }
+
+  _hide(id) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.display = "none";
+      el.style.pointerEvents = "none";
+    }
   }
 }
 
@@ -203,26 +285,55 @@ class LayerManager {
     this.city = null;
     this.world = null;
     this.palace = null;
+
+    window.addEventListener("projectionchange", (e) => {
+      const mode = e.detail.projection;
+      this.loadForProjection(mode);
+    });
   }
 
-  loadAllLayers() {
-    //set pan level
-    this.app.map.createPane("palacePane");
-    this.app.map.createPane("cityPane");
-    this.app.map.createPane("worldPane");
-    this.app.map.getPane("palacePane").style.zIndex = 450;
-    this.app.map.getPane("cityPane").style.zIndex = 300;
-    this.app.map.getPane("worldPane").style.zIndex = 250;
-
-    this.loadBasemap();
+  loadForProjection(mode) {
+    this.clearAll();
+    if (mode !== "wgs") {
+      return;
+    }
+    this._initPanesWGS();
+    this.loadBasemapWGS();
     this.loadPalacePoints();
     this.initStyleRadioWatcher();
-    this.loadStatePolygon();
     this.loadCityPolygon();
+    this.loadEmpirePolygon();
     this.loadWorldPolygon();
   }
 
-  loadBasemap() {
+  getMap() {
+    return this.app.mapManager.getActiveMap();
+  }
+
+  _initPanesWGS() {
+    const map = this.getMap();
+    if (!map) return;
+    if (!map.getPane("palacePane")) map.createPane("palacePane");
+    if (!map.getPane("cityPane")) map.createPane("cityPane");
+    if (!map.getPane("worldPane")) map.createPane("worldPane");
+    map.getPane("palacePane").style.zIndex = 450;
+    map.getPane("cityPane").style.zIndex = 300;
+    map.getPane("worldPane").style.zIndex = 250;
+  }
+
+  clearAll() {
+    const map = this.getMap();
+    [this.palace, this.city, this.world, this.openStreetMap].foreach((lyr) => {
+      if (lyr && map && map.hasLayer(lyr)) map.removeLayer(lyr);
+    });
+    this.palace = this.city = this.world = this.openStreetmap = null;
+    this.city_list = [];
+    this.country_list = [];
+  }
+
+  loadBasemapWGS() {
+    const map = this.getMap;
+    if (!map) return;
     this.openStreetMap = L.tileLayer(
       "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
       {
@@ -231,14 +342,16 @@ class LayerManager {
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }
     );
-    this.openStreetMap.addTo(this.app.map);
+    this.openStreetMap.addTo(map);
   }
 
   loadPalacePoints() {
+    const map = this.getMap();
+    if (!map) return;
     this.palace = new L.GeoJSON.AJAX("assets/Address_US.geojson", {
       pane: "palacePane",
       pointToLayer: this.getPointStyleFunction(),
-    }).addTo(this.app.map);
+    }).addTo(map);
   }
 
   initStyleRadioWatcher() {
@@ -251,19 +364,21 @@ class LayerManager {
   }
 
   reloadPalaceLayer() {
+    const map = this.getMap();
+    if (!map) return;
     if (this.palace) {
-      this.palace.remove();
+      this.palace.removeLayer(this.palace);
     }
     this.palace = new L.GeoJSON.AJAX("assets/Address_US.geojson", {
       pointToLayer: this.getPointStyleFunction(),
       pane: "palacePane",
-    }).addTo(this.app.map);
+    }).addTo(map);
   }
 
   getPointStyleFunction() {
-    const selected = document.querySelector(
-      'input[name="choosestyle"]:checked'
-    ).id;
+    const selected =
+      document.querySelector('input[name="choosestyle"]:checked').id ||
+      "pointStyle1";
     // console.log(selected);
     return selected === "pointStyle1"
       ? this.pointStyle1.bind(this)
@@ -272,29 +387,17 @@ class LayerManager {
 
   pointStyle1(feature, latlng) {
     const attr = feature.properties;
-    const location = latlng;
     const status = attr["Current Status"];
-    const radius = 4.5;
-    const fillOpacity = 0.9;
-    const opacity = 0.6;
-    const weight = 2;
-    let fill_color = "rgba(203, 206, 18, 1)";
-    let inner_color = "#f9e79f";
-
-    switch (status) {
-      case "Still Standing":
-        inner_color = "#C70039";
-        fill_color = "rgba(235, 65, 113, 1)";
-        break;
-    }
-
     const marker = L.circleMarker(latlng, {
-      radius,
-      fillOpacity,
-      opacity,
-      weight,
-      fillColor: fill_color,
-      color: inner_color,
+      radius: 4.5,
+      fillOpacity: 0.9,
+      opacity: 0.6,
+      weight: 2,
+      fillColor:
+        status === "Still Standing"
+          ? "rgba(235, 65, 113, 1)"
+          : "rgba(203, 206, 18, 1)",
+      color: status === "Still Standing" ? "#C70039" : "#f9e79f",
     });
 
     marker.on("click", () => {
@@ -302,7 +405,7 @@ class LayerManager {
       this.app.uiManager.initSideBar(); // in case it's collapsed
       // handel when dataquery is shown
       const el = document.querySelector("#data_container");
-      const isHidden = window.getComputedStyle(el).display === "none";
+      const isHidden = el && window.getComputedStyle(el).display === "none";
       console.log("是否隐藏：", isHidden);
       if (!isHidden) {
         this.app.uiManager.showElement("#explore_container");
@@ -310,8 +413,7 @@ class LayerManager {
       this.app.uiManager.handleExploreAreaClick();
       $("#explore_area_content").html(message);
       // can add setview but it's too much move
-      const location = latlng;
-      this.app.map.setView(location, 9);
+      this.app.map.setView(latlng, 9);
     });
     return marker;
   }
@@ -348,11 +450,9 @@ class LayerManager {
       this.app.uiManager.initSideBar(); // in case it's collapsed
       // handel when dataquery is shown
       const el = document.querySelector("#data_container");
-      const isHidden = window.getComputedStyle(el).display === "none";
+      const isHidden = el && window.getComputedStyle(el).display === "none";
       console.log("是否隐藏：", isHidden);
-      if (!isHidden) {
-        this.app.uiManager.showElement("#explore_container");
-      }
+      if (!isHidden) this.app.uiManager.showElement("#explore_container");
       this.app.uiManager.handleExploreAreaClick();
       $("#explore_area_content").html(message);
       // can add setview but it's too much move
@@ -363,7 +463,7 @@ class LayerManager {
   }
 
   generatePointMsg(data) {
-    let message =
+    return (
       "Theater:&nbsp" +
       data.Name +
       "<br> Address:&nbsp" +
@@ -383,11 +483,13 @@ class LayerManager {
       "<br> Website:&nbsp" +
       (data.Website ? data.Website : "Unknown") +
       "<br> Notes:&nbsp" +
-      (data.Notes ? data.Notes : "Unknown");
-    return message;
+      (data.Notes ? data.Notes : "Unknown")
+    );
   }
 
   loadCityPolygon() {
+    const map = this.getMap();
+    if (!map) return;
     this.city = new L.GeoJSON.AJAX("assets/citylayer7.30.geojson", {
       pane: "cityPane",
       style: () => ({
@@ -411,12 +513,14 @@ class LayerManager {
           layer.setStyle({ weight: 0 });
         });
       },
-    }).addTo(this.app.map);
+    }).addTo(map);
   }
 
-  loadStatePolygon() {}
+  loadEmpirePolygon() {}
 
   loadWorldPolygon() {
+    const map = getMap();
+    if (!map) return;
     const country_array = [
       "Brazil",
       "Burkina Faso",
@@ -430,7 +534,7 @@ class LayerManager {
       "United Kingdom",
       "United States of America",
     ];
-    const country_centroid = {
+    const centroid = {
       // prettier-ignore
       "Brazil": [-7.535994, -72.340427],
       // prettier-ignore
@@ -478,24 +582,42 @@ class LayerManager {
         this.country_list.push({ name, layer });
         if (country_array.includes(name)) {
           layer.on("click", () => {
-            this.app.map.setView(country_centroid[name], 5);
+            this.app.mapManager.setView(centroid[name], 5);
           });
         }
       },
-    }).addTo(this.app.map);
+    }).addTo(map);
   }
 }
 
 class UIManager {
   constructor(app) {
     this.app = app;
+    this.sidebar = null;
+
+    window.addEventListener("projectionchange", () => {
+      this.initSideBar;
+    });
+  }
+
+  getMap() {
+    return this.app.mapManager.getActiveMap();
   }
 
   initSideBar() {
+    const map = this.getMap();
+    if (!map) return;
+
+    if (this.sidebar && this.sidebar.remove) {
+      try {
+        this.sidebar.remove();
+      } catch {}
+    }
+
     this.sidebar = L.control.sidebar("sidebar", {
       position: "left",
     });
-    this.app.map.addControl(this.sidebar);
+    map.addControl(this.sidebar);
     this.sidebar.open("home");
   }
 
@@ -508,13 +630,15 @@ class UIManager {
   }
 
   updateSidebarByZoom() {
+    const map = this.getMap();
+    if (!map) return;
+
     const el = document.querySelector("#data_container");
-    const isHidden = window.getComputedStyle(el).display === "none";
+    const isHidden = el && window.getComputedStyle(el).display === "none";
     console.log("是否隐藏：", isHidden);
-    if (!isHidden) {
-      return;
-    }
-    let currentZoom = this.app.map.getZoom();
+    if (!isHidden) return;
+
+    let currentZoom = map.getZoom();
     if (currentZoom <= 4) {
       this.showGlobalMenu();
     } else {
@@ -648,16 +772,38 @@ class UIManager {
 class SearchManager {
   constructor(app) {
     this.app = app;
-  }
+    this.poliLayer = null;
+    this.searchControl = null;
 
+    window.addEventListener("projectionchange", (e) => {
+      const mode = e.detail.projection;
+      if (mode === "wgs") this.initSearchBar();
+      else this.removeSearchBar();
+    });
+  }
+  getMap() {
+    return this.app.mapManager.getActiveMap();
+  }
+  removeSearchBar() {
+    const map = this.getMap();
+    if (this.searchControl && map) {
+      try {
+        map.removeControl(this.searchControl);
+      } catch {}
+      this.searchControl = null;
+    }
+  }
   initSearchBar() {
-    const poliLayer = L.featureGroup([
+    const map = this.getMap();
+    if (!map) return;
+    this.removeSearchBar();
+    this.poliLayer = L.featureGroup([
       this.app.layerManager.city,
       this.app.layerManager.world,
-    ]);
-    this.poliLayer = poliLayer;
-    const searchControl = new L.Control.Search({
-      layer: poliLayer,
+    ]).filter(Boolean);
+
+    this.searchControl = new L.Control.Search({
+      layer: this.poliLayer,
       propertyName: "NAME",
       marker: false,
       collapsed: false,
@@ -666,7 +812,7 @@ class SearchManager {
         map.setView(latlng, 8);
       },
     });
-    this.app.map.addControl(searchControl);
+    map.addControl(searchControl);
   }
 
   updateNameList() {}
@@ -675,9 +821,40 @@ class SearchManager {
 class EventManager {
   constructor(app) {
     this.app = app;
+    this.layersControl = null;
+
+    window.addEventListener("projectionchange", (e) => {
+      const mode = e.detail.projection;
+      this.rebindForProjection(mode);
+    });
+  }
+
+  getMap() {
+    return this.app.mapManager.getActiveMap();
+  }
+
+  rebindForProjection(mode) {
+    // 清除旧控制
+    if (this.layersControl) {
+      const map = this.getMap();
+      if (map)
+        try {
+          map.removeControl(this.layersControl);
+        } catch {}
+      this.layersControl = null;
+    }
+
+    // 仅在 WGS 下挂载这些控件
+    if (mode === "wgs") {
+      this.attachLayerControl();
+      this.attachZoomHandler();
+      this.attachDrawButtons();
+    }
   }
 
   attachLayerControl() {
+    const map = this.getMap();
+    if (!map) return;
     const baseLayers = {
       "Open Street Basemap": this.app.layerManager.openStreetMap,
     };
@@ -685,17 +862,21 @@ class EventManager {
       "City Boundary": this.app.layerManager.city,
       "Country Boundary": this.app.layerManager.world,
     };
-    L.control.layers(baseLayers, overLays).addTo(this.app.map);
+    this.layersControl = L.control.layers(baseLayers, overLays).addTo(map);
   }
 
   attachZoomHandler() {
-    L.control.zoom({ position: "topright" }).addTo(this.app.map);
-    this.app.map.on("zoomend", () => {
+    const map = this.getMap();
+    if (!map) return;
+    L.control.zoom({ position: "topright" }).addTo(map);
+    map.on("zoomend", () => {
       this.app.uiManager.updateSidebarByZoom();
     });
   }
   attachDrawButtons() {
-    this.app.map.pm.addControls({
+    const map = this.getMap();
+    if (!map || !map.pm) return;
+    map.pm.addControls({
       position: "topright",
       drawMarker: true,
       drawCircleMarker: false,
