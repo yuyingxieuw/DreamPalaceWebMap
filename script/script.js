@@ -631,6 +631,8 @@ class UIManager {
     });
     map.addControl(this.sidebar);
     this.sidebar.open("home");
+    this.initSidebarEvents();
+    this.backtoocean();
   }
 
   showGlobalMenu() {
