@@ -62,9 +62,9 @@
   background-color: #141204;
 }
 
-.sidebar-noheader {
-  padding-right: 20px;
-}
+/* .sidebar-noheader {
+  padding-right: 16px;
+} */
 
 .sidebar-tabs,
 .sidebar-tabs > ul {
@@ -283,7 +283,12 @@
 }
 
 /* Menu_styling  */
-
+#level_1_menu_group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 5px;
+}
 .level_1_menu {
   text-decoration: none;
   position: relative;
@@ -291,18 +296,33 @@
   color: #fdf9ed;
   font-size: 18px;
   font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-  text-align: center;
+  text-align: left;
+  padding-left: 140px;
   display: block;
+}
+
+#year-display {
+  color: #fdf9ed;
+  position: relative;
+  display: block;
+  font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+  font-size: 18px;
+  padding-bottom: 5px;
+  transform: translateY(5px);
 }
 
 .line {
   padding: 0;
   text-align: center;
   background-color: #fdf9ed;
-  opacity: 60%;
+  opacity: 1;
 }
 
 /* Content_container_styling  */
+
+#spilhaus_sidebar {
+  display: block;
+}
 #explore_container {
   display: block;
   margin-top: 30px;
@@ -314,58 +334,16 @@
   line-height: 1.6;
   letter-spacing: 0.2px;
   font-size: 15px;
-  padding: 6px 4px;
+  padding-top: 6px;
+  padding-right: 30px;
 }
 
-#data_source_content {
+/* WGS Sidebar Part */
+#wgs_sidebar {
   display: none;
-}
-
-#about_team_content {
-  display: none;
-}
-
-#explore_area_content {
-  display: none;
-}
-
-#palace_history_content {
-  display: none;
-}
-
-#picture_more_content {
-  display: none;
-}
-
-#data_container {
-  display: none;
-}
-
-#query_statistics_container .sidebar-noheader {
-  display: block;
-  padding-left: 5px;
-  height: 100%;
-}
-
-#data_query_window {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 10px;
-  box-sizing: border-box;
-  width: 100%;
-  height: 90%;
-  position: relative;
-}
-
-#choose_style {
-  color: white;
 }
 
 #time-control {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
   position: relative;
   background: transparent;
   padding: 0;
@@ -374,18 +352,13 @@
   margin-bottom: 10px;
 }
 
-#year-display {
-  width: 100%;
-  text-align: center;
-}
-
 #timeSlider {
   -webkit-appearance: none; /* 去掉默认样式 */
   appearance: none;
   width: 100%;
-  height: 2px; /* ★★★ 调整粗细：越小越细 */
-  background: #ffffffaa; /* 轨道颜色 */
-  border-radius: 2px;
+  height: 1px; /* ★★★ 调整粗细：越小越细 */
+  background: white; /* 轨道颜色 */
+  border-radius: 0.5px;
   outline: none;
   cursor: pointer;
 }
@@ -394,6 +367,7 @@
   gap: 14px;
   font-size: 14px;
   width: 100%;
+  margin-top: 30px;
 }
 
 .filter-select {
@@ -424,21 +398,25 @@
 /* Clean Filters Buttons */
 .btn-clean,
 .btn-ocean {
+  width: 90px;
+  height: 30px;
+  padding: 3px 8px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
   padding-left: 3px;
   padding-right: 3px;
   border: none;
-  border-radius: 6px;
   font-size: 13px;
   cursor: pointer;
 }
 
 .btn-clean {
-  background: beige;
+  background: rgb(204, 227, 243);
   color: #000;
-  font-weight: bold;
 }
 .btn-clean:hover {
-  background: #ffe070;
+  background: #4f9cfb;
 }
 
 #backtospilhaus {
@@ -458,10 +436,57 @@
   /* box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2); */
 }
 
-#explore_container_no_menu p {
-  color: rgb(215, 210, 210);
+#level_2_menu_group {
+  margin-top: 20px;
+}
+.level_2_menu {
+  text-decoration: none;
+  position: relative;
+  padding-bottom: 5px;
+  color: white;
+  margin-left: 18%;
 }
 
-#explore_container_no_menu {
-  color: rgb(215, 210, 210);
+.level_2_menu:link {
+  color: white;
+}
+
+.level_2_menu:visited {
+  color: white;
+}
+
+.level_2_menu:hover {
+  color: #fdf9ed;
+
+  text-decoration: none;
+}
+
+.level_2_menu::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0%;
+  height: 2px;
+  background-color: white;
+  transition: width 0.3s ease;
+}
+
+.level_2_menu:hover:after {
+  width: 100%;
+  text-decoration: none;
+}
+
+.level_2_menu:activate:after {
+  width: 100%;
+}
+
+#data_query_window {
+  color: white;
+  margin-top: 20px;
+}
+
+#area_info {
+  color: white;
+  margin-top: 20px;
 }

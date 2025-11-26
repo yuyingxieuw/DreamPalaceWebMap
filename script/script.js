@@ -444,7 +444,7 @@ class LayerManager {
     try {
       const response = await fetch("airtablesync/places_cache.geojson");
       this.originalData = await response.json();
-      console.log("Original data loaded:", this.originalData);
+      // console.log("Original data loaded:", this.originalData);
       this.app.uiManager.populateDropdowns(this.originalData);
       this.reloadPalacePoints();
     } catch (err) {
@@ -584,13 +584,12 @@ class LayerManager {
       const el = document.querySelector("#data_container");
       const isHidden = el && window.getComputedStyle(el).display === "none";
       //console.log("是否隐藏：", isHidden);
-      if (!isHidden) {
-        this.app.uiManager.showElement("#explore_container");
-      }
-      this.app.uiManager.handleExploreAreaClick();
-      $("#explore_area_content").html(message);
+      if (!isHidden) this.app.uiManager.showElement("#data_query_window");
+      this.app.uiManager.handleAboutPalaceClick();
+      $("#data_query_window").html(message);
       // can add setview but it's too much move
-      //this.app.mapManager.setView(latlng, 9);
+      // const location = latlng;
+      // this.app.mapManager.setView(location, 8);
     });
     return marker;
   }
@@ -629,9 +628,9 @@ class LayerManager {
       const el = document.querySelector("#data_container");
       const isHidden = el && window.getComputedStyle(el).display === "none";
       //console.log("是否隐藏：", isHidden);
-      if (!isHidden) this.app.uiManager.showElement("#explore_container");
-      this.app.uiManager.handleExploreAreaClick();
-      $("#explore_area_content").html(message);
+      if (!isHidden) this.app.uiManager.showElement("#data_query_window");
+      this.app.uiManager.handleAboutPalaceClick();
+      $("#data_query_window").html(message);
       // can add setview but it's too much move
       // const location = latlng;
       // this.app.mapManager.setView(location, 8);
@@ -812,7 +811,9 @@ class UIManager {
     this.app = app;
     this.sidebar = null;
     this._eventsAbort = null;
-    window.addEventListener("projectionchange", () => {
+    this.projection = null;
+    window.addEventListener("projectionchange", (e) => {
+      this.projection = e.detail.projection;
       this.initSideBar();
     });
   }
@@ -840,36 +841,11 @@ class UIManager {
     });
     map.addControl(this.sidebar);
     this.sidebar.open("home");
+    this.handleProjectionUI();
     this.initSidebarEvents();
     this.backtoocean();
   }
 
-  showGlobalMenu() {
-    this.handleAboutProjectClick();
-  }
-
-  showCountryMenu() {
-    this.handleExploreAreaClick();
-  }
-
-  updateSidebarByZoom() {
-    const map = this.getMap();
-    if (!map) return;
-
-    const el = document.querySelector("#data_container");
-    const isHidden = el && window.getComputedStyle(el).display === "none";
-    //console.log("是否隐藏：", isHidden);
-    if (!isHidden) return;
-
-    let currentZoom = map.getZoom();
-    if (currentZoom <= 4) {
-      this.showGlobalMenu();
-    } else {
-      this.showCountryMenu();
-    }
-  }
-
-  // buttons
   showElement(selector) {
     document.querySelector(selector).style.display = "block";
   }
@@ -878,89 +854,30 @@ class UIManager {
     document.querySelector(selector).style.display = "none";
   }
 
-  setDisplay(selector, value) {
-    document.querySelector(selector).style.display = value;
+  handleProjectionUI() {
+    if (this.projection === "spilhaus") {
+      this.showElement("#spilhaus_sidebar");
+      this.hideElement("#wgs_sidebar");
+    }
+    if (this.projection === "wgs") {
+      this.hideElement("#spilhaus_sidebar");
+      this.showElement("#wgs_sidebar");
+    }
   }
 
-  handleExploreClick() {
-    this.showElement("#level_2_menu_group_1");
-    this.hideElement("#level_2_menu_group_2");
-    this.showElement("#explore_container");
-    this.hideElement("#data_container");
-    this.setDisplay("#about_project", "inline");
-    this.showElement("#about_project_content");
-    this.hideElement("#data_source_content");
-    this.hideElement("#about_team_content");
-    this.hideElement("#explore_area_content");
-    this.hideElement("#palace_history_content");
-    this.hideElement("#picture_more_content");
+  // buttons
+  handleAboutAreaClick() {
+    this.hideElement("#spilhaus_sidebar");
+    this.showElement("#wgs_sidebar");
+    this.showElement("#area_info");
+    this.hideElement("#data_query_window");
   }
 
-  handleDataQueryClick() {
-    this.hideElement("#explore_container");
-    this.showElement("#data_container");
-  }
-
-  handleAboutProjectClick() {
-    this.showElement("#level_2_menu_group_1");
-    this.hideElement("#level_2_menu_group_2");
-    this.showElement("#about_project_content");
-    this.hideElement("#data_source_content");
-    this.hideElement("#about_team_content");
-    this.hideElement("#data_container");
-    this.hideElement("#explore_area_content");
-    this.hideElement("#palace_history_content");
-    this.hideElement("#picture_more_content");
-  }
-  handleDataSourceClick() {
-    this.hideElement("#about_project_content");
-    this.showElement("#data_source_content");
-    this.hideElement("#about_team_content");
-    this.hideElement("#data_container");
-    this.hideElement("#explore_area_content");
-    this.hideElement("#palace_history_content");
-    this.hideElement("#picture_more_content");
-  }
-  handleAboutTeamClick() {
-    this.hideElement("#about_project_content");
-    this.hideElement("#data_source_content");
-    this.showElement("#about_team_content");
-    this.hideElement("#data_container");
-    this.hideElement("#explore_area_content");
-    this.hideElement("#palace_history_content");
-    this.hideElement("#picture_more_content");
-  }
-
-  handleExploreAreaClick() {
-    this.hideElement("#level_2_menu_group_1");
-    this.showElement("#level_2_menu_group_2");
-    this.hideElement("#about_project_content");
-    this.hideElement("#data_source_content");
-    this.hideElement("#about_team_content");
-    this.hideElement("#data_container");
-    this.showElement("#explore_area_content");
-    this.hideElement("#palace_history_content");
-    this.hideElement("#picture_more_content");
-  }
-
-  handlePalaceHistoryClick() {
-    this.hideElement("#about_project_content");
-    this.hideElement("#data_source_content");
-    this.hideElement("#about_team_content");
-    this.hideElement("#data_container");
-    this.hideElement("#explore_area_content");
-    this.showElement("#palace_history_content");
-    this.hideElement("#picture_more_content");
-  }
-
-  handlePictureMoreClick() {
-    this.hideElement("#about_project_content");
-    this.hideElement("#data_source_content");
-    this.hideElement("#about_team_content");
-    this.hideElement("#data_container");
-    this.hideElement("#explore_area_content");
-    this.hideElement("#palace_history_content");
-    this.showElement("#picture_more_content");
+  handleAboutPalaceClick() {
+    this.hideElement("#spilhaus_sidebar");
+    this.showElement("#wgs_sidebar");
+    this.hideElement("#area_info");
+    this.showElement("#data_query_window");
   }
 
   initSidebarEvents() {
@@ -969,47 +886,18 @@ class UIManager {
     const sig = this._eventsAbort.signal;
 
     document
-      .querySelector("#explore")
-      .addEventListener("click", this.handleExploreClick.bind(this), {
+      .querySelector("#about_area")
+      .addEventListener("click", this.handleAboutAreaClick.bind(this), {
         signal: sig,
       });
     document
-      .querySelector("#data_query")
-      .addEventListener("click", this.handleDataQueryClick.bind(this), {
-        signal: sig,
-      });
-    document
-      .querySelector("#about_project")
-      .addEventListener("click", this.handleAboutProjectClick.bind(this), {
-        signal: sig,
-      });
-    document
-      .querySelector("#data_source")
-      .addEventListener("click", this.handleDataSourceClick.bind(this), {
-        signal: sig,
-      });
-    document
-      .querySelector("#about_team")
-      .addEventListener("click", this.handleAboutTeamClick.bind(this), {
-        signal: sig,
-      });
-    document
-      .querySelector("#explore_area")
-      .addEventListener("click", this.handleExploreAreaClick.bind(this), {
-        signal: sig,
-      });
-    document
-      .querySelector("#palace_history")
-      .addEventListener("click", this.handlePalaceHistoryClick.bind(this), {
-        signal: sig,
-      });
-    document
-      .querySelector("#picture_more")
-      .addEventListener("click", this.handlePictureMoreClick.bind(this), {
+      .querySelector("#about_palace")
+      .addEventListener("click", this.handleAboutPalaceClick.bind(this), {
         signal: sig,
       });
   }
 
+  // filter event
   initFilterEvents() {
     const ids = [
       "filter-country",
@@ -1052,7 +940,6 @@ class UIManager {
 
   populateDropdowns(geojson) {
     const features = geojson.features;
-
     const unique = (field) => {
       const values = features.flatMap((f) => {
         const v = f.properties[field];
@@ -1223,13 +1110,14 @@ class EventManager {
       .addTo(map);
   }
 
+  //暂时没有Zoom改变的问题
   attachZoomHandler() {
     const map = this.getMap();
     if (!map) return;
     this.zoomControl = L.control.zoom({ position: "topright" }).addTo(map);
-    map.on("zoomend", () => {
-      this.app.uiManager.updateSidebarByZoom();
-    });
+    // map.on("zoomend", () => {
+    //   this.app.uiManager.updateSidebarByZoom();
+    // });
   }
 
   attachDrawButtons() {

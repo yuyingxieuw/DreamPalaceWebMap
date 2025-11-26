@@ -76,9 +76,12 @@
 
                 <!-- WGS Proj Content -->
                 <div id = "wgs_sidebar">
-                    <div class="sidebar-noheader sectionmenu_container" id = "level_1_menu_group" style= "margin-bottom: 5px; margin-top:10px">
+                    <div class="sidebar-noheader sectionmenu_container" id = "level_1_menu_group" style= "margin-bottom: 5px;">
+                        <h1 class="level_1_menu" id="explore">Query Data</h1>  
+                        <div id = "year-display"> (Year: all) </div>   
+                    </div>
+                    <div class="data_container" >
                         <div id="time-control">
-                             <div id = "year-display"> Year: All </div>
                                 <input 
                                     type="range" 
                                     id="timeSlider" 
@@ -86,7 +89,7 @@
                                     max="2026" 
                                     step="1" 
                                     value="2026"
-                                />
+                                /> 
                         </div>
 
                         <div id="filter-card">
@@ -116,18 +119,22 @@
                             <!-- Current Focus Area -->
                             <div id="focus-area">
                         </div>
+
+                        <!-- WGS project menu level 2  -->
+                        <div class = "sidebar_menu" id = "level_2_menu_group">
+                            <a class="level_2_menu" id="about_area" href="#">About Area +</a>
+                            <a class="level_2_menu" id="about_palace" href="#">About Palace +</a> 
+                        </div>
                         <!-- Area Info Card -->
-                        <div class = "area_info">
+                        <div id = "area_info">
                             <p style="color: aliceblue;"> Some text about country and regions</p>
                         </div>
                         <!-- Query Result -->
-                        <div class = "data_query_window">
+                        <div id = "data_query_window">
                             <p style="color: aliceblue;">Here put all data result from Airtable</p>
                         </div>
 
                     </div>
-                    <div class = "col-xs-11 line"></div>
-                   
                 </div>
             </div> 
            
