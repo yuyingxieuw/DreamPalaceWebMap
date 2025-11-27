@@ -325,9 +325,8 @@
 }
 #explore_container {
   display: block;
-  margin-top: 30px;
+  margin-top: 15px;
 }
-
 #about_map_text {
   color: #f0ede7;
   font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
@@ -349,7 +348,7 @@
   padding: 0;
   color: white;
   width: 90%;
-  margin-bottom: 10px;
+  margin-bottom: 0px;
 }
 
 #timeSlider {
@@ -364,10 +363,11 @@
 }
 
 #filter-card {
-  gap: 14px;
+  display: block;
+  gap: 10px;
   font-size: 14px;
   width: 100%;
-  margin-top: 30px;
+  margin-top: 15px;
 }
 
 .filter-select {

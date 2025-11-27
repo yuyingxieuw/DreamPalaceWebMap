@@ -867,6 +867,8 @@ class UIManager {
 
   // buttons
   handleAboutAreaClick() {
+    document.querySelector("#about_area").textContent = "About Area +";
+    document.querySelector("#about_palace").textContent = "About Palace -";
     this.hideElement("#spilhaus_sidebar");
     this.showElement("#wgs_sidebar");
     this.showElement("#area_info");
@@ -874,6 +876,8 @@ class UIManager {
   }
 
   handleAboutPalaceClick() {
+    document.querySelector("#about_area").textContent = "About Area -";
+    document.querySelector("#about_palace").textContent = "About Palace +";
     this.hideElement("#spilhaus_sidebar");
     this.showElement("#wgs_sidebar");
     this.hideElement("#area_info");
@@ -885,6 +889,8 @@ class UIManager {
     this._eventsAbort = new AbortController();
     const sig = this._eventsAbort.signal;
 
+    this.showElement("#area_info");
+    this.hideElement("#data_query_window");
     document
       .querySelector("#about_area")
       .addEventListener("click", this.handleAboutAreaClick.bind(this), {
@@ -1215,6 +1221,6 @@ class TimelineManager {
     };
   }
 }
-// test the script
+// run the script
 const app = new WebMapApp();
 app.initialize();
