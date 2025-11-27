@@ -70,7 +70,7 @@ class MapManager {
 
   buildCRS() {
     const xOffset = 0; // 右移 20万
-    const yOffset = 3232190; // 上移
+    const yOffset = 1300000; // 上移
     const minx = -16589673.7126 + xOffset;
     const miny = -16615682.2786 + yOffset;
     const maxx = 16881778.7724 + xOffset;
@@ -188,6 +188,7 @@ class MapManager {
   }
 
   loadSpilhausCountries() {
+    const polygonYOffset = 1990000;
     const style = {
       color: "#e4e5e7ff",
       weight: 1,
@@ -206,7 +207,7 @@ class MapManager {
         .then((geojson) => {
           if (geojson.crs) delete geojson.crs;
           const polyLayer = new L.GeoJSON(geojson, {
-            coordsToLatLng: (c) => L.latLng(c[1], c[0]),
+            coordsToLatLng: (c) => L.latLng(c[1] - polygonYOffset, c[0]),
             style,
             interactive: true,
             onEachFeature: (_, layer) => {
