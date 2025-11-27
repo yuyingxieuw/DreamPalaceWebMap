@@ -1,0 +1,57 @@
+{
+  "Brazil": {
+    "title": "Brzail",
+    "description": "Brazil has a rich history of black movies including the classic international film Black Orpheus, modern dramas like City of God and Branco Sai, Preto Fica, and documentaries such as Brazil in Black and White and Black in Latin America.",
+    "image": ["assets/img/Brazil_img1.png"]
+  },
+  "Burkina_Faso": {
+    "title": "Burkina_Faso",
+    "description": "Burkina Faso is a landlocked country in West Africa, bordered by Mali to the northwest, Niger to the northeast, Benin to the southeast, Togo and Ghana to the south, and Ivory Coast to the southwest. It covers an area of 274,223 km². In 2024, the country had an estimated population of approximately 23,286,000(Wikipedia).",
+    "image": ["assets/img/Burkina_Faso_img1.png"]
+  },
+  "Cameroon": {
+    "title": "Cameroon",
+    "description": "Cameroon, on the Gulf of Guinea, is a Central African country of varied terrain and wildlife. Its inland capital, Yaoundé, and its biggest city, the seaport Douala, are transit points to ecotourism sites as well as beach resorts like Kribi – near the Chutes de la Lobé waterfalls, which plunge directly into the sea – and Limbe, where the Limbe Wildlife Centre houses rescued primates (Wikipedia).",
+    "image": ["assets/img/Cameroon_img1.png"]
+  },
+  "Ghana": {
+    "title": "Ghana",
+    "description": "Ghana, officially the Republic of Ghana, is a country in West Africa. It is situated with the Gulf of Guinea and the Atlantic Ocean to the south, and shares borders with Côte d'Ivoire to the west, Burkina Faso to the north, and Togo to the east. Wikipedia",
+    "image": ["assets/img/Ghana_img1.png"]
+  },
+  "Mali": {
+    "title": "Mali",
+    "description": "Mali officially the Republic of Mali, is a landlocked country in West Africa. It is the eighth-largest country in Africa and the 23rd largest country in the world, with an area of over 1,240,192 square kilometres (478,841 sq mi). The country is bordered to the north by Algeria, to the east by Niger, to the northwest by Mauritania, to the south by Burkina Faso and Ivory Coast, and to the west by Guinea and Senegal. The population of Mali is about 23.29 million,47.19% of which are estimated to be under the age of 15 in 2024. Its capital and largest city is Bamako. The country has 13 official languages, of which Bambara is the most commonly spoken. ",
+    "image": ["assets/img/Mali_img1.png"]
+  },
+  "Monzambique": {
+    "title": "Monzambique",
+    "description": "Mozambique is a southern African nation whose long Indian Ocean coastline is dotted with popular beaches like Tofo, as well as offshore marine parks. In the Quirimbas Archipelago, a 250km stretch of coral islands, mangrove-covered Ibo Island has colonial-era ruins surviving from a period of Portuguese rule. The Bazaruto Archipelago farther south has reefs which protect rare marine life including dugongs. ― Google",
+    "image": ["assets/img/Mozambique_img1.png"]
+  },
+  "Nigeria": {
+    "title": "Nigeria",
+    "description": "Nigeria, an African country on the Gulf of Guinea, has many natural landmarks and wildlife reserves. Protected areas such as Cross River National Park and Yankari National Park have waterfalls, dense rainforest, savanna and rare primate habitats. One of the most recognizable sites is Zuma Rock, a 725m-tall monolith outside the capital of Abuja that’s pictured on the national currency. ― Google",
+    "image": ["assets/img/Nigeria_img1.png"]
+  },
+  "Senegal": {
+    "title": "Senegal",
+    "description": "Senegal, officially the Republic of Senegal, is the westernmost country in West Africa, situated along the Atlantic Ocean coast. It borders Mauritania to the north, Mali to the east, Guinea to the southeast and Guinea-Bissau to the southwest. Wikipedia",
+    "image": ["assets/img/Senegal_img1.png"]
+  },
+  "South_Africa": {
+    "title": "South Africa",
+    "description": "South Africa is a country on the southernmost tip of the African continent, marked by several distinct ecosystems. Inland safari destination Kruger National Park is populated by big game. The Western Cape offers beaches, lush winelands around Stellenbosch and Paarl, craggy cliffs at the Cape of Good Hope, forest and lagoons along the Garden Route, and the city of Cape Town, beneath flat-topped Table Mountain. ― Google",
+    "image": ["assets/img/South_Africa_img1.png"]
+  },
+  "United_Kingdom": {
+    "title": "United Kingdom",
+    "description": "The United Kingdom, made up of England, Scotland, Wales and Northern Ireland, is an island nation in northwestern Europe. England – birthplace of Shakespeare and The Beatles – is home to the capital, London, a globally influential centre of finance and culture. England is also site of Neolithic Stonehenge, Bath’s Roman spa and centuries-old universities at Oxford and Cambridge. ― Google",
+    "image": ["assets/img/United_Kingdom_img1.png"]
+  },
+  "US": {
+    "title": "US",
+    "description": "The U.S. is a country of 50 states covering a vast swath of North America, with Alaska in the northwest and Hawaii extending the nation’s presence into the Pacific Ocean. Major Atlantic Coast cities are New York, a global finance and culture center, and capital Washington, DC. Midwestern metropolis Chicago is known for influential architecture and on the west coast, Los Angeles' Hollywood is famed for filmmaking.",
+    "image": ["assets/img/US_img1.png"]
+  }
+}

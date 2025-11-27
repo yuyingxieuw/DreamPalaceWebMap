@@ -490,3 +490,11 @@
   color: white;
   margin-top: 20px;
 }
+
+.country-image {
+  width: 300px;
+  height: auto;
+  display: block;
+  margin: 12px 0;
+  border-radius: 6px;
+}

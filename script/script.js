@@ -221,6 +221,7 @@ class MapManager {
                 },
                 click: () => {
                   this._switchToWgsUsingCentroid(key);
+                  this.app.uiManager.handleAreaInfoShift(key);
                 },
               });
             },
@@ -812,9 +813,11 @@ class UIManager {
     this.sidebar = null;
     this._eventsAbort = null;
     this.projection = null;
+    this.areaInfo = {};
     window.addEventListener("projectionchange", (e) => {
       this.projection = e.detail.projection;
       this.initSideBar();
+      this.loadAreaInfo();
     });
   }
 
@@ -863,6 +866,37 @@ class UIManager {
       this.hideElement("#spilhaus_sidebar");
       this.showElement("#wgs_sidebar");
     }
+  }
+
+  loadAreaInfo() {
+    fetch("assets/area_info.json")
+      .then((res) => res.json())
+      .then((data) => {
+        this.area_info = data;
+      })
+      .catch((err) => console.error("Failed to load area info", err));
+  }
+
+  handleAreaInfoShift(key) {
+    const info = this.area_info[key];
+    if (!info) {
+      console.warn("No area info founded for country:", key);
+    }
+
+    let imageHTML = "";
+    if (info.image && info.image.length > 0) {
+      imageHTML = info.image
+        .map((src) => `<img src="${src}" class="country-image">`)
+        .join("");
+    }
+
+    document.querySelector("#area_info").innerHTML = `
+    <h3>${info.title}</h3>
+    <p>${info.description}</p>
+    <div class="image-container">
+    ${imageHTML}
+    </div>
+    `;
   }
 
   // buttons
