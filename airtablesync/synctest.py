@@ -9,14 +9,14 @@ AIRTABLE_BASE = os.getenv("AIRTABLE_BASE")
 AIRTABLE_TABLE=os.getenv("AIRTABLE_TABLE")
 AIRTABLE_TOKEN =os.getenv("AIRTABLE_TOKEN")
 AIRTABLE_VIEW = os.getenv("AIRTABLE_VIEW")
-CACHE_PATH = os.getenv("CACHE_PATH", "./airtablesync/places_cache.geojson")
+CACHE_PATH = os.getenv("CACHE_PATH", "./airtablesync/places_cache_withmore.geojson")
 LAT_FIELD = os.getenv("LAT_FIELD")
 LNG_FIELD = os.getenv("LNG_FIELD")
 
 def fetch_all_records():
     api = Api(AIRTABLE_TOKEN)
     table = api.table(AIRTABLE_BASE,AIRTABLE_TABLE)
-    fields = ["Name", "City", "Country", "Address", "State / Province", "ZIP Code", "Latitude", "Longitude", "Condition [V2] ", "Typology", "Creation", "Closure"]
+    fields = ["Name", "City", "Country", "Address", "State / Province", "ZIP Code", "Latitude", "Longitude", "Condition", "Typology", "Creation", "Closure", "Replaced By", "Website description", "Additional resources", "Images"]
     records = table.all(fields=fields) # didn't set the airtable view - assume we only use grid view
     return records
 
@@ -52,12 +52,6 @@ def to_geojson(data):
         "name": "AirtableData",
         "features": features
     }
-
-def condition_name(geo):
-    for item in geo.get("features"):
-        for k,v in item.get("properties").items():
-            if k == "Condition [V2] ":
-                k = "Condition"
 
 def write_geojson(geo,path=CACHE_PATH):
     os.makedirs(os.path.dirname(path), exist_ok=True)
