@@ -348,10 +348,13 @@
 }
 
 /* WGS Sidebar Part */
+
 #wgs_sidebar {
   display: none;
 }
-
+.data_container {
+  height: 80px;
+}
 #time-control {
   position: relative;
   background: transparent;
@@ -505,11 +508,11 @@
 /* back button  */
 
 #backtospilhaus {
-  display: flex;
-  position: absolute;
-  align-items: center;
-  bottom: 10px;
-  right: 10px;
+  display: block;
+  margin-top: 20px;
+  text-align: right;
+  padding-right: 10px;
+  cursor: pointer;
 }
 
 #back {

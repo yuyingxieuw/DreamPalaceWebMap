@@ -171,17 +171,26 @@ class MapManager {
       center,
       zoom: Math.max(zoom, 4),
       minZoom: 2,
-      maxZoom: 19,
+      maxZoom: 6,
       scrollWheelZoom: true,
       doubleClickZoom: true,
       zoomSnap: 1,
       zoomControl: false,
+      zoomAnimation: true,
+      fadeAnimation: true,
     });
 
     L.tileLayer(
-      "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+      "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}@2x.png",
       {
-        maxZoom: 20,
+        tileSize: 512,
+        zoomOffset: -1,
+        minZoom: 2,
+        maxZoom: 6,
+        keepBuffer: 6,
+        updateWhenIdle: false,
+        updateWhenZooming: false,
+        detectRetina: true,
         attribution: "&copy; CARTO &copy; OpenStreetMap contributors",
       }
     ).addTo(this.mapWgs);
@@ -418,28 +427,7 @@ class LayerManager {
   loadBasemapWGS() {
     const map = this.getMap();
     if (!map) return;
-    this.openStreetMap = L.tileLayer(
-      "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-      {
-        maxZoom: 20,
-        attribution: "&copy; CARTO &copy; OpenStreetMap contributors",
-      }
-    ).addTo(map);
-
-    this.openStreetMap.addTo(map);
   }
-
-  // loadPalacePoints() {
-  //   const map = this.getMap();
-  //   if (!map) return;
-
-  //   this.palace = new L.GeoJSON.AJAX("airtablesync/places_cache.geojson", {
-  //     pane: "palacePane",
-  //     pointToLayer: this.getPointStyleFunction(),
-  //     // pointToLayer: (_feature, latlng) =>
-  //     //   L.circleMarker(latlng, { radius: 4, fillOpacity: 0.85, weight: 1 }),
-  //   }).addTo(map);
-  // }
 
   // load original data (all year/ all data)
   async loadPalaceData() {
