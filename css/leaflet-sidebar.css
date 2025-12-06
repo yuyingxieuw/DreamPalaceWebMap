@@ -408,6 +408,11 @@
   box-shadow: 0 0 4px #dacc7b;
 }
 
+.inactive {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
 /* Clean Filters Buttons */
 .btn-clean,
 .btn-ocean {

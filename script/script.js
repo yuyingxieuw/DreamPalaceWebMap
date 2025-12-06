@@ -955,42 +955,71 @@ class UIManager {
   }
 
   resetFilter() {
-    const ids = [
-      "filter-country",
-      "filter-city",
-      "filter-condition",
-      "filter-typology",
-    ];
+    const ids = ["filter-country", "filter-condition", "filter-typology"];
 
     ids.forEach((id) => {
       const sel = document.getElementById(id);
       if (sel) sel.selectedIndex = 0;
     });
+
+    document.getElementById("filter-city").classList.add("inactive");
+    document.getElementById("filter-city").selectedIndex = 0;
   }
 
   populateDropdowns(geojson) {
     const features = geojson.features;
+
+    // set country and it's own cities
+    const countryCityMap = {};
+    for (const f of features) {
+      const prop = f.properties;
+      const country = prop.Country;
+      const city = prop.City;
+      if (!country || !city) continue;
+
+      if (!countryCityMap[country]) {
+        countryCityMap[country] = new Set();
+      }
+      if (Array.isArray(city)) {
+        city.forEach((c) => c && countryCityMap[country].add(c));
+      } else {
+        countryCityMap[country].add(city);
+      }
+    }
+
+    // all countries
+    const countries = Object.keys(countryCityMap);
+
+    // other filter selector
+
     const unique = (field) => {
       const values = features.flatMap((f) => {
         const v = f.properties[field];
         if (Array.isArray(v)) return v.filter(Boolean);
         return v ? [v] : [];
       });
-
       const cleaned = [...new Set(values)].sort();
-      // console.log(`Unique ${field}:`, cleaned);
       return cleaned;
     };
-
-    const countries = unique("Country");
-    const cities = unique("City");
     const conditions = unique("Condition");
     const typologies = unique("Typology");
 
+    // drop down menu
     fill("filter-country", countries);
-    fill("filter-city", cities);
+    fill("filter-city", []);
     fill("filter-condition", conditions);
     fill("filter-typology", typologies);
+
+    document
+      .getElementById("filter-country")
+      .addEventListener("change", (e) => {
+        const selectedCountry = e.target.value;
+        const cities = selectedCountry
+          ? [...countryCityMap[selectedCountry]].sort()
+          : [];
+        document.getElementById("filter-city").classList.remove("inactive");
+        fill("filter-city", cities);
+      });
 
     function fill(id, items) {
       const sel = document.getElementById(id);
