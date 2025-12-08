@@ -86,3 +86,7 @@ body {
 .leaflet-overlay-pane {
   z-index: 400;
 }
+
+.palace-marker {
+  cursor: pointer; /* 鼠标在点上变成小手 */
+}

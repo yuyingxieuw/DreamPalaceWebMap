@@ -216,7 +216,7 @@ class MapManager {
         })
         .then((geojson) => {
           if (geojson.crs) delete geojson.crs;
-          const polyLayer = new L.GeoJSON(geojson, {
+          const polyLayer = new L.geoJSON(geojson, {
             coordsToLatLng: (c) => L.latLng(c[1] - polygonYOffset, c[0]),
             style,
             interactive: true,
@@ -390,7 +390,7 @@ class LayerManager {
     this.initStyleRadioWatcher();
     // this.loadCityPolygon();
     this.loadEmpirePolygon();
-    // this.loadWorldPolygon();
+    this.loadCountryPolygon();
   }
 
   getMap() {
@@ -402,17 +402,18 @@ class LayerManager {
   }
 
   _initPanesWGS() {
-    //skip city and world for now
+    //skip city for now
     const map = this.getMap();
     if (!map) return;
     if (!map.getPane("palacePane")) map.createPane("palacePane");
     // if (!map.getPane("cityPane")) map.createPane("cityPane");
-    // if (!map.getPane("worldPane")) map.createPane("worldPane");
+    if (!map.getPane("countryPane")) map.createPane("countryPane");
     if (!map.getPane("empirePane")) map.createPane("empirePane");
     map.getPane("palacePane").style.zIndex = 450;
+    map.getPane("palacePane").style.pointerEvents = "none";
     // map.getPane("cityPane").style.zIndex = 400;
     map.getPane("empirePane").style.zIndex = 300;
-    // map.getPane("worldPane").style.zIndex = 250;
+    map.getPane("countryPane").style.zIndex = 250;
   }
 
   clearAll() {
@@ -526,24 +527,11 @@ class LayerManager {
         "change",
         () => {
           // console.log("选项变化，重新加载图层");
-          this.reloadPalaceLayer(); // 每次根据 getPointStyleFunction 重新加载
+          this.renderPalaceLayer(); // 每次根据 getPointStyleFunction 重新加载
         },
         { signal: sig }
       );
     });
-  }
-
-  reloadPalaceLayer() {
-    const map = this.getMap();
-    const proj = this.getProj();
-    if (!map || proj === "spilhaus") return;
-    if (this.palace) {
-      map.removeLayer(this.palace);
-    }
-    this.palace = new L.GeoJSON.AJAX("airtablesync/places_cache.geojson", {
-      pointToLayer: this.getPointStyleFunction(),
-      pane: "palacePane",
-    }).addTo(map);
   }
 
   getPointStyleFunction() {
@@ -560,12 +548,14 @@ class LayerManager {
     const attr = feature.properties;
     const status = attr["Condition"];
     const marker = L.circleMarker(latlng, {
+      className: "palace-marker",
       radius: 2.1,
       fillOpacity: 0.9,
       opacity: 0.6,
       weight: 1,
       fillColor: status === "Still Standing" ? "#0077b6" : "#00b4d8",
       color: status === "Still Standing" ? "#f4f2f2ff" : "#ffffffff",
+      pane: "palacePane",
     });
 
     marker.on("click", () => {
@@ -585,6 +575,7 @@ class LayerManager {
     return marker;
   }
 
+  // this func is not used - if want to add choose from data has specific location or not.
   pointStyle2(feature, latlng) {
     const attr = feature.properties;
     const status = attr["Address"];
@@ -604,12 +595,14 @@ class LayerManager {
     }
 
     const marker = L.circleMarker(latlng, {
+      className: "palace-marker",
       radius,
       opacity,
       weight,
       fillColor: fill_color,
       color: inner_color,
       fillOpacity: fill_opacity,
+      pane: "palacePane",
     });
 
     marker.on("click", () => {
@@ -724,77 +717,98 @@ class LayerManager {
     }
   }
 
-  // loadWorldPolygon() {
-  //   const map = this.getMap();
-  //   if (!map) return;
-  //   const country_array = [
-  //     "Brazil",
-  //     "Burkina Faso",
-  //     "Cameroon",
-  //     "Ghana",
-  //     "Mali",
-  //     "Mozambique",
-  //     "Nigeria",
-  //     "Senegal",
-  //     "South Africa",
-  //     "United Kingdom",
-  //     "United States of America",
-  //   ];
-  //   const centroid = {
-  //     // prettier-ignore
-  //     "Brazil": [-7.535994, -72.340427],
-  //     // prettier-ignore
-  //     "Burkina Faso": [11.726473, -5.308822],
-  //     // prettier-ignore
-  //     "Cameroon": [5.810411, 9.631660],
-  //     // prettier-ignore
-  //     "Ghana": [7.678434, -2.749734],
-  //     // prettier-ignore
-  //     "Mali": [18.191814, -5.811439],
-  //     // prettier-ignore
-  //     "Mozambique": [-18.877222, 32.659506],
-  //     // prettier-ignore
-  //     "Nigeria": [9.039145, 2.763425],
-  //     // prettier-ignore
-  //     "Senegal": [14.781868, -17.375992],
-  //     // prettier-ignore
-  //     "South Africa": [-28.898819, 17.063372],
-  //     // prettier-ignore
-  //     "United Kingdom": [54.091472, -13.224016],
-  //     // prettier-ignore
-  //     "United States of America": [41.599380, -105.308336],
-  //   };
-  //   this.world = new L.GeoJSON.AJAX("assets/worldPolygon.geojson", {
-  //     pane: "worldPane",
-  //     style: (feature) => {
-  //       const name = feature.properties.NAME;
-  //       if (country_array.includes(name)) {
-  //         return {
-  //           color: "#581204ff",
-  //           weight: 2,
-  //           fillColor: "rgba(255,255,255,0)",
-  //           fillOpacity: 0,
-  //         };
-  //       }
-  //       return {
-  //         color: "white",
-  //         weight: 0.4,
-  //         fillColor: "gray",
-  //         fillOpacity: 0,
-  //       };
-  //     },
-  //     onEachFeature: (feature, layer) => {
-  //       const name = feature.properties.NAME;
-  //       this.country_list.push({ name, layer });
-  //       // 点击国家移动禁止
-  //       // if (country_array.includes(name)) {
-  //       //   layer.on("click", () => {
-  //       //     this.app.mapManager.setView(centroid[name], 5);
-  //       //   });
-  //       // }
-  //     },
-  //   }).addTo(map);
-  // }
+  async loadCountryPolygon() {
+    const map = this.getMap();
+    if (!map) return;
+    const country_array = [
+      "Brazil",
+      "Burkina Faso",
+      "Cameroon",
+      "Ghana",
+      "Mali",
+      "Mozambique",
+      "Nigeria",
+      "Senegal",
+      "South Africa",
+      "United Kingdom",
+      "United States of America",
+    ];
+    const centroid = {
+      // prettier-ignore
+      "Brazil": [-7.535994, -72.340427],
+      // prettier-ignore
+      "Burkina Faso": [11.726473, -5.308822],
+      // prettier-ignore
+      "Cameroon": [5.810411, 9.631660],
+      // prettier-ignore
+      "Ghana": [7.678434, -2.749734],
+      // prettier-ignore
+      "Mali": [18.191814, -5.811439],
+      // prettier-ignore
+      "Mozambique": [-18.877222, 32.659506],
+      // prettier-ignore
+      "Nigeria": [9.039145, 2.763425],
+      // prettier-ignore
+      "Senegal": [14.781868, -17.375992],
+      // prettier-ignore
+      "South Africa": [-28.898819, 17.063372],
+      // prettier-ignore
+      "United Kingdom": [54.091472, -13.224016],
+      // prettier-ignore
+      "United States of America": [41.599380, -105.308336],
+    };
+    try {
+      const response = await fetch("assets/worldPolygon.geojson");
+      const data = await response.json();
+      this.country = L.geoJSON(data, {
+        pane: "countryPane",
+        style: (feature) => {
+          return {
+            color: "white",
+            weight: 0,
+            fillColor: "white",
+            fillOpacity: 0,
+          };
+        },
+        onEachFeature: (feature, layer) => {
+          const name = feature.properties.NAME;
+          if (country_array.includes(name)) {
+            layer.on({
+              mouseover: (e) => {
+                e.target.setStyle({
+                  color: "#e4e5e7ff",
+                  weight: 0.8,
+                  fillColor: "#062244ff",
+                  fillOpacity: 0,
+                });
+                if (e.target._path) {
+                  e.target._path.style.cursor = "default"; // 强制改 cursor
+                }
+                e.target.bringToFront();
+              },
+              mouseout: (e) => {
+                const to = e.originalEvent.relatedTarget;
+                if (to && to.closest(".palace-marker")) {
+                  return;
+                }
+                this.country.resetStyle(e.target);
+              },
+            });
+          } else {
+            layer.on({
+              mouseover: (e) => {
+                if (e.target._path) {
+                  e.target._path.style.cursor = "default"; // 强制改 cursor
+                }
+              },
+            });
+          }
+        },
+      }).addTo(map);
+    } catch (err) {
+      console.error("Failed to load country boundary layer", err);
+    }
+  }
 }
 
 class UIManager {
