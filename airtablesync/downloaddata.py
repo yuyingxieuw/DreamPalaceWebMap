@@ -9,6 +9,7 @@ AIRTABLE_BASE = os.getenv("AIRTABLE_BASE")
 AIRTABLE_TABLE=os.getenv("AIRTABLE_TABLE")
 AIRTABLE_TOKEN =os.getenv("AIRTABLE_TOKEN")
 AIRTABLE_VIEW = os.getenv("AIRTABLE_VIEW")
+# cache_path is not in env so just edit here
 CACHE_PATH = os.getenv("CACHE_PATH", "./airtablesync/places_cache_withmore_test.geojson")
 LAT_FIELD = os.getenv("LAT_FIELD")
 LNG_FIELD = os.getenv("LNG_FIELD")

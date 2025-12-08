@@ -758,7 +758,7 @@ class LayerManager {
       "United States of America": [41.599380, -105.308336],
     };
     try {
-      const response = await fetch("assets/worldPolygon.geojson");
+      const response = await fetch("assets/selectedcountryWGS.geojson");
       const data = await response.json();
       this.country = L.geoJSON(data, {
         pane: "countryPane",
