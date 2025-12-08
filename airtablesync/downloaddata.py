@@ -9,7 +9,7 @@ AIRTABLE_BASE = os.getenv("AIRTABLE_BASE")
 AIRTABLE_TABLE=os.getenv("AIRTABLE_TABLE")
 AIRTABLE_TOKEN =os.getenv("AIRTABLE_TOKEN")
 AIRTABLE_VIEW = os.getenv("AIRTABLE_VIEW")
-CACHE_PATH = os.getenv("CACHE_PATH", "./airtablesync/places_cache_withmore.geojson")
+CACHE_PATH = os.getenv("CACHE_PATH", "./airtablesync/places_cache_withmore_test.geojson")
 LAT_FIELD = os.getenv("LAT_FIELD")
 LNG_FIELD = os.getenv("LNG_FIELD")
 
@@ -55,7 +55,7 @@ def to_geojson(data):
 
 def write_geojson(geo,path=CACHE_PATH):
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path,"w",encoding="utf=8") as f:
+    with open(path,"w",encoding="utf-8") as f:
         json.dump(geo,f,ensure_ascii=False, indent=2, default=str)
 
 if __name__=="__main__":
