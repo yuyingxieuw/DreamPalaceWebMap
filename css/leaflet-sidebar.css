@@ -5,7 +5,7 @@
   width: 100%;
   overflow: scroll;
   z-index: 1000;
-  background-color: #141204;
+  background-color: black;
 }
 .sidebar.collapsed {
   width: 40px;
@@ -59,7 +59,7 @@
   bottom: 0;
   height: 100%;
   width: 60px;
-  background-color: #141204;
+  background-color: black;
 }
 
 /* .sidebar-noheader {
@@ -78,20 +78,20 @@
 .sidebar-tabs > ul > li {
   width: 100%;
   height: 40px;
-  color: #333;
+  color: black;
   font-size: 12pt;
   overflow: hidden;
   transition: all 80ms;
 }
 .sidebar-tabs > li:hover,
 .sidebar-tabs > ul > li:hover {
-  color: #000;
-  background-color: #141204;
+  color: black;
+  background-color: black;
 }
 .sidebar-tabs > li.active,
 .sidebar-tabs > ul > li.active {
-  color: #141204;
-  background-color: #141204;
+  color: black;
+  background-color: black;
 }
 .sidebar-tabs > li.disabled,
 .sidebar-tabs > ul > li.disabled {
@@ -123,7 +123,7 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  background-color: #141204;
+  background-color: black;
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -221,14 +221,14 @@
 
 .sidebar.leaflet-touch {
   box-shadow: none;
-  border-right: 2px solid rgba(0, 0, 0, 0.2);
+  border-right: 2px solid black;
 }
 @media (min-width: 768px) {
   .sidebar {
     border-radius: 4px;
   }
   .sidebar.leaflet-touch {
-    border: 2px solid rgba(0, 0, 0, 0.2);
+    border: 2px solid black;
   }
 }
 

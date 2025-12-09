@@ -257,14 +257,12 @@ class MapManager {
       const data = await response.json();
       const pointStyle = {
         radius: 1,
-        fillOpacity: 0.9,
-        opacity: 0.6,
-        weight: 1,
         fillColor: "#ffffff",
+        fillOpacity: 0.9, // 内部白点保持亮
         color: "#0044d8ff",
-        weight: 0.8,
-        opacity: 0.4,
-        className: "palace-spilhaus-point fade-point",
+        weight: 0.5,
+        opacity: 0.3,
+        className: "palace-spilhaus-point dream-star fade-point",
       };
       this.palaceSpil = L.geoJSON(data, {
         coordsToLatLng: (c) => L.latLng(c[1] - polygonYOffset, c[0]),
