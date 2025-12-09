@@ -256,15 +256,15 @@ class MapManager {
       const response = await fetch("assets/pointsspil.geojson");
       const data = await response.json();
       const pointStyle = {
-        radius: 1.2,
+        radius: 1,
         fillOpacity: 0.9,
         opacity: 0.6,
         weight: 1,
         fillColor: "#ffffff",
         color: "#0044d8ff",
-        weight: 0.2,
+        weight: 0.8,
         opacity: 0.4,
-        className: "palace-spilhaus-point glowing-point",
+        className: "palace-spilhaus-point fade-point",
       };
       this.palaceSpil = L.geoJSON(data, {
         coordsToLatLng: (c) => L.latLng(c[1] - polygonYOffset, c[0]),

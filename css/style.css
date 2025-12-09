@@ -96,30 +96,18 @@ body {
   pointer-events: none;
 }
 
-/* 发光点基础样式 */
-.glowing-point {
-  filter: drop-shadow(0 0 4px rgba(0, 150, 255, 0.9))
-    drop-shadow(0 0 8px rgba(0, 150, 255, 0.6))
-    drop-shadow(0 0 12px rgba(0, 150, 255, 0.3));
-  transition: transform 0.2s ease-out;
-  animation: pulseGlow 2.4s infinite ease-in-out;
+.fade-point {
+  animation: fadeInOut 7s ease-in-out infinite;
 }
 
-/* 呼吸闪烁动画 */
-@keyframes pulseGlow {
+@keyframes fadeInOut {
   0% {
-    filter: drop-shadow(0 0 4px rgba(0, 150, 255, 0.9))
-      drop-shadow(0 0 8px rgba(0, 150, 255, 0.6));
-    opacity: 0.9;
+    opacity: 0.8;
   }
   50% {
-    filter: drop-shadow(0 0 7px rgba(0, 180, 255, 1))
-      drop-shadow(0 0 14px rgba(0, 180, 255, 0.8));
-    opacity: 1;
+    opacity: 0.05; /* 中间阶段几乎消失 */
   }
   100% {
-    filter: drop-shadow(0 0 4px rgba(0, 150, 255, 0.9))
-      drop-shadow(0 0 8px rgba(0, 150, 255, 0.6));
-    opacity: 0.9;
+    opacity: 0.8;
   }
 }
