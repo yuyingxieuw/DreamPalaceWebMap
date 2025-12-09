@@ -13,7 +13,26 @@ def transform(in_path, out_path):
     
     with open(in_path, "r", encoding="utf-8") as f:
         data = json.load(f)
-
+    new_features= []
+    
     for feature in data.get("features"):
         coords = feature.get("geometry").get("coordinates") 
-        feature["geometry"]["coordinates"] = [[[tx_point(pt) for pt in ring] for ring in poly]for poly in coords]
+        x,y = coords[0],coords[1]
+        if x is None or y is None:
+            continue
+        else:
+            feature["geometry"]["coordinates"] = tx_point(coords) 
+             #simplify geojson to make the data smaller
+            feature.pop("properties", None)
+            new_features.append(feature)
+    
+    new_geojson = {
+         "type": "FeatureCollection",
+        "name": "PointsLayer",
+        "features": new_features
+    }
+
+    with open (out_path, "w", encoding = "utf-8") as f:
+        json.dump(new_geojson,f,ensure_ascii=False)
+
+transform("airtablesync/places_cache_withmore.geojson","assets/pointsspil.geojson")

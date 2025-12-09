@@ -13,6 +13,7 @@ class WebMapApp {
     this.mapManager.createSpilhaus();
     this.mapManager.addSpilhausTiles();
     this.mapManager.loadSpilhausCountries();
+    this.mapManager.loadSpilhausPalace();
     this.mapManager.activate("spilhaus");
     this.layerManager.loadForProjection("spilhaus");
   }
@@ -202,8 +203,8 @@ class MapManager {
     const style = {
       color: "#e4e5e7ff",
       weight: 1,
-      fillColor: "#062244ff",
-      fillOpacity: 0.25,
+      fillColor: "#ffffffff",
+      fillOpacity: 0,
     };
 
     this.spilhausCountryFiles.forEach((key) => {
@@ -223,7 +224,7 @@ class MapManager {
             onEachFeature: (_, layer) => {
               layer.on({
                 mouseover: (e) => {
-                  e.target.setStyle({ weight: 2, fillOpacity: 0.35 });
+                  e.target.setStyle({ weight: 2, fillOpacity: 0 });
                   e.target.bringToFront();
                   //console.log("Mouseover::", e);
                 },
@@ -243,6 +244,38 @@ class MapManager {
           console.error(`[Spilhaus] GeoJSON load failed: ${key}`, err)
         );
     });
+  }
+
+  async loadSpilhausPalace() {
+    const polygonYOffset = 1990000;
+    try {
+      this.mapSpilhaus.createPane("pointPane");
+      const pointPane = this.mapSpilhaus.getPane("pointPane");
+      pointPane.style.zindex = 700;
+      pointPane.style.pointerEvents = "none";
+      const response = await fetch("assets/pointsspil.geojson");
+      const data = await response.json();
+      const pointStyle = {
+        radius: 1.2,
+        fillOpacity: 0.9,
+        opacity: 0.6,
+        weight: 1,
+        fillColor: "#ffffff",
+        color: "#0044d8ff",
+        weight: 0.2,
+        opacity: 0.4,
+        className: "palace-spilhaus-point glowing-point",
+      };
+      this.palaceSpil = L.geoJSON(data, {
+        coordsToLatLng: (c) => L.latLng(c[1] - polygonYOffset, c[0]),
+        pane: "pointPane",
+        pointToLayer: (feature, latlng) => {
+          return L.circleMarker(latlng, pointStyle);
+        },
+      }).addTo(this.mapSpilhaus);
+    } catch (err) {
+      console.error("Failed to load palace point spilhaus data", err);
+    }
   }
 
   activate(mode, opts = {}) {
@@ -434,7 +467,9 @@ class LayerManager {
   // load original data (all year/ all data)
   async loadPalaceData() {
     try {
-      const response = await fetch("airtablesync/places_cache.geojson");
+      const response = await fetch(
+        "airtablesync/places_cache_withmore.geojson"
+      );
       this.originalData = await response.json();
       // console.log("Original data loaded:", this.originalData);
       this.app.uiManager.populateDropdowns(this.originalData);
