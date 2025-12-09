@@ -1,7 +1,7 @@
 from pyproj import CRS, Transformer
 import json 
 
-# this is the code transform coord data from 4326 to spilhaus
+# this is the script transfrom all palace point data to spilhaus
 def transform(in_path, out_path):
     crs_54099 = CRS.from_proj4("+proj=spilhaus +lat_0=-49.56371678 +lon_0=66.94970198 +azi=40.17823482 +k_0=1.4142135623731 +rot=45 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs")
     crs_4326 = CRS.from_epsg(4326)
@@ -17,11 +17,3 @@ def transform(in_path, out_path):
     for feature in data.get("features"):
         coords = feature.get("geometry").get("coordinates") 
         feature["geometry"]["coordinates"] = [[[tx_point(pt) for pt in ring] for ring in poly]for poly in coords]
-        
-    with open (out_path, "w", encoding = "utf-8") as f:
-        json.dump(data,f,ensure_ascii=False)
-
-transform("assets/alskjson.geojson","assets/alskspil.geojson")
-
-
-
