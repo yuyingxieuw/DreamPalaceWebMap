@@ -253,7 +253,9 @@ class MapManager {
       const pointPane = this.mapSpilhaus.getPane("pointPane");
       pointPane.style.zindex = 700;
       pointPane.style.pointerEvents = "none";
-      const response = await fetch("assets/pointsspil.geojson");
+      const response = await fetch(
+        "http://127.0.0.1:5000/api/palaces_spil.geojson"
+      );
       const data = await response.json();
       const pointStyle = {
         radius: 1,
@@ -465,7 +467,9 @@ class LayerManager {
   // load original data (all year/ all data)
   async loadPalaceData() {
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/palaces.geojson");
+      const response = await fetch(
+        "http://127.0.0.1:5000/api/palaces_wgs.geojson"
+      );
       this.originalData = await response.json();
       // console.log("Original data loaded:", this.originalData);
       this.app.uiManager.populateDropdowns(this.originalData);
