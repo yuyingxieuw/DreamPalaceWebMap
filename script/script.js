@@ -465,9 +465,7 @@ class LayerManager {
   // load original data (all year/ all data)
   async loadPalaceData() {
     try {
-      const response = await fetch(
-        "airtablesync/places_cache_withmore.geojson"
-      );
+      const response = await fetch("http://127.0.0.1:5000/api/palaces.geojson");
       this.originalData = await response.json();
       // console.log("Original data loaded:", this.originalData);
       this.app.uiManager.populateDropdowns(this.originalData);
