@@ -254,7 +254,7 @@ class MapManager {
       pointPane.style.zindex = 700;
       pointPane.style.pointerEvents = "none";
       const response = await fetch(
-        "http://127.0.0.1:5000/api/palaces_spil.geojson"
+        "https://dreampalacemapapp.onrender.com/api/palaces_spil.geojson"
       );
       const data = await response.json();
       const pointStyle = {
@@ -468,7 +468,7 @@ class LayerManager {
   async loadPalaceData() {
     try {
       const response = await fetch(
-        "http://127.0.0.1:5000/api/palaces_wgs.geojson"
+        "https://dreampalacemapapp.onrender.com/api/palaces_wgs.geojson"
       );
       this.originalData = await response.json();
       // console.log("Original data loaded:", this.originalData);
