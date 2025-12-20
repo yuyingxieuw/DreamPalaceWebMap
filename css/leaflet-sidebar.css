@@ -6,6 +6,8 @@
   overflow: scroll;
   z-index: 1000;
   background-color: black;
+  transition: width 1.5s ease !important;
+  overflow: hidden;
 }
 .sidebar.collapsed {
   width: 40px;
@@ -338,6 +340,7 @@
   margin-top: 15px;
 }
 #about_map_text {
+  width: 550px;
   color: #f0ede7;
   font-family: Arial, Helvetica, sans-serif;
   line-height: 1.6;
