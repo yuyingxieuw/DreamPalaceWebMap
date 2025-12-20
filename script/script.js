@@ -1,14 +1,20 @@
 class WebMapApp {
   constructor() {
     this.mapManager = new MapManager(this);
+    this.dataManager = new DataManager(this);
     this.layerManager = new LayerManager(this);
     this.uiManager = new UIManager(this);
     // this.searchManager = new SearchManager(this);
     this.eventManager = new EventManager(this);
     this.timelineManager = new TimelineManager(this);
+    this.wgsStateManager = new WgsStateManager(this);
   }
 
-  initialize() {
+  async initialize() {
+    // 1. fetch core data
+    // 2. load initial projection
+    // 3. init UI components
+    await this.dataManager.fetchData();
     this.mapManager.buildCRS();
     this.mapManager.createSpilhaus();
     this.mapManager.addSpilhausTiles();
@@ -16,6 +22,8 @@ class WebMapApp {
     this.mapManager.loadSpilhausPalace();
     this.mapManager.activate("spilhaus");
     this.layerManager.loadForProjection("spilhaus");
+    this.uiManager.initFilterEvents();
+    this.timelineManager.initTimelineUI();
   }
 }
 
@@ -246,17 +254,15 @@ class MapManager {
     });
   }
 
-  async loadSpilhausPalace() {
+  loadSpilhausPalace() {
     const polygonYOffset = 1990000;
     try {
       this.mapSpilhaus.createPane("pointPane");
       const pointPane = this.mapSpilhaus.getPane("pointPane");
       pointPane.style.zindex = 700;
       pointPane.style.pointerEvents = "none";
-      const response = await fetch(
-        "https://dreampalacemapapp.onrender.com/api/palaces_spil.geojson"
-      );
-      const data = await response.json();
+      const data = this.app.dataManager.geojson_spil;
+      // console.log(data);
       const pointStyle = {
         radius: 1,
         fillColor: "#ffffff",
@@ -315,6 +321,7 @@ class MapManager {
         this.setView(opts.center, opts.zoom ?? this.wgsDefaultZoom);
       }
       this._emitProjectionChange();
+      this.app.wgsStateManager.getZoomLevel();
       return;
     }
 
@@ -373,6 +380,75 @@ class MapManager {
   }
 }
 
+class DataManager {
+  // DataManager lifecycle:
+  // - fetch once at app init
+  // - shared across all projections and maps
+  constructor(app) {
+    this.app = app;
+    this.geojson_wgs = []; // geojson data already
+    this.geojson_spil = []; // geojson
+    this.unique_country = [];
+  }
+
+  async fetchData() {
+    //fetch geojson datat for wgs palace
+    try {
+      const response_wgs = await fetch(
+        "https://dreampalacemapapp.onrender.com/api/palaces_wgs.geojson"
+      );
+      this.geojson_wgs = await response_wgs.json();
+    } catch (err) {
+      console.log("Failed to fetch geojson_wgs data");
+    }
+    // fetch geojson data for spil (note this data only have name and latlng)
+    try {
+      const response_spil = await fetch(
+        "https://dreampalacemapapp.onrender.com/api/palaces_spil.geojson"
+      );
+      this.geojson_spil = await response_spil.json();
+    } catch (err) {
+      console.log("Failed to fetch geojson_spil data");
+    }
+  }
+
+  // get combined filter data
+  getCombinedFilters() {
+    return {
+      ...this.app.uiManager.getUIFilters(),
+      ...this.app.timelineManager.getTimeFilters(),
+    };
+  }
+
+  // filter original data -- >. go to data manager
+  filterData() {
+    const filters = this.getCombinedFilters();
+
+    return this.geojson_wgs.features.filter((f) => {
+      const p = f.properties;
+      const timeMatch_Creation =
+        filters.yearChoose === "all" || p.Creation <= filters.yearChoose;
+      const timeMatch_Closure =
+        filters.yearChoose === "all" || p.Closure >= filters.yearChoose;
+      const countryMatch =
+        filters.country === "all" || p.Country === filters.country;
+      const cityMatch = filters.city === "all" || p.City === filters.city;
+      const conditionMatch =
+        filters.condition === "all" || p.Condition === filters.condition;
+      const typologyMatch =
+        filters.typology === "all" || p.Typology === filters.typology;
+      return (
+        timeMatch_Creation &&
+        timeMatch_Closure &&
+        cityMatch &&
+        countryMatch &&
+        conditionMatch &&
+        typologyMatch
+      );
+    });
+  }
+}
+
 class LayerManager {
   constructor(app) {
     this.app = app;
@@ -406,20 +482,12 @@ class LayerManager {
     }
     this._initPanesWGS();
     this.loadBasemapWGS();
-    //1）load data
-    this.loadPalaceData().then(() => {
-      // after dropdown is populated
-      this.app.uiManager.initFilterEvents();
-      // timeline slider should appear now
-      this.app.timelineManager.initTimelineUI();
-      this.reloadPalacePoints();
-      window.dispatchEvent(
-        new CustomEvent("projectionready", {
-          detail: { projection: "wgs" },
-        })
-      );
-    });
-
+    this.reloadPalacePoints();
+    window.dispatchEvent(
+      new CustomEvent("projectionready", {
+        detail: { projection: "wgs" },
+      })
+    );
     this.initStyleRadioWatcher();
     // this.loadCityPolygon();
     this.loadEmpirePolygon();
@@ -465,18 +533,14 @@ class LayerManager {
   }
 
   // load original data (all year/ all data)
-  async loadPalaceData() {
-    try {
-      const response = await fetch(
-        "https://dreampalacemapapp.onrender.com/api/palaces_wgs.geojson"
-      );
-      this.originalData = await response.json();
-      // console.log("Original data loaded:", this.originalData);
-      this.app.uiManager.populateDropdowns(this.originalData);
-      this.reloadPalacePoints();
-    } catch (err) {
-      console.error("Failed to load palace data", err);
-    }
+  loadPalaceData() {
+    this.originalData = this.app.dataManager.geojson_wgs;
+    // console.log("Original data loaded:", this.originalData);
+    this.app.uiManager.populateDropdowns(this.originalData);
+    this.reloadPalacePoints();
+  }
+  catch(err) {
+    console.error("Failed to load palace data", err);
   }
 
   //render layer
@@ -493,42 +557,6 @@ class LayerManager {
       { type: "FeatureCollection", features: filteredFeatures },
       { pointToLayer: this.getPointStyleFunction() }
     ).addTo(map);
-  }
-
-  // get combined filter data
-  getCombinedFilters() {
-    return {
-      ...this.app.uiManager.getUIFilters(),
-      ...this.app.timelineManager.getTimeFilters(),
-    };
-  }
-
-  // filter original data
-  filterData() {
-    const filters = this.getCombinedFilters();
-
-    return this.originalData.features.filter((f) => {
-      const p = f.properties;
-      const timeMatch_Creation =
-        filters.yearChoose === "all" || p.Creation <= filters.yearChoose;
-      const timeMatch_Closure =
-        filters.yearChoose === "all" || p.Closure >= filters.yearChoose;
-      const countryMatch =
-        filters.country === "all" || p.Country === filters.country;
-      const cityMatch = filters.city === "all" || p.City === filters.city;
-      const conditionMatch =
-        filters.condition === "all" || p.Condition === filters.condition;
-      const typologyMatch =
-        filters.typology === "all" || p.Typology === filters.typology;
-      return (
-        timeMatch_Creation &&
-        timeMatch_Closure &&
-        cityMatch &&
-        countryMatch &&
-        conditionMatch &&
-        typologyMatch
-      );
-    });
   }
 
   // update map
@@ -548,7 +576,7 @@ class LayerManager {
       map.removeLayer(this.palace);
     }
 
-    const filteredFeatures = this.filterData();
+    const filteredFeatures = this.app.dataManager.filterData();
     this.renderPalaceLayer(filteredFeatures);
   }
 
@@ -1323,6 +1351,29 @@ class TimelineManager {
     };
   }
 }
+
+class WgsStateManager {
+  constructor(app) {
+    this.app = app;
+    this.current_zoom = null;
+    this.current_center = null;
+    this.current_country = null;
+  }
+  getZoomLevel() {
+    this.current_zoom = this.app.mapManager.mapWgs.getZoom();
+    console.log(this.current_zoom);
+  }
+
+  getCenterPoint() {
+    this.current_center = this.app.mapManager.mapWgs.getCenter();
+    console.log(this.current_center);
+  }
+
+  getCurrentCountry() {
+    this.current_country = this.app.mapManager.activeCountry;
+  }
+}
+
 // run the script
 const app = new WebMapApp();
 app.initialize();
