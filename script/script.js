@@ -521,7 +521,7 @@ class LayerManager {
     );
     this.initStyleRadioWatcher();
     // this.loadCityPolygon();
-    this.loadEmpirePolygon();
+    // this.loadEmpirePolygon();
     this.loadCountryPolygon();
   }
 
@@ -540,11 +540,11 @@ class LayerManager {
     if (!map.getPane("palacePane")) map.createPane("palacePane");
     // if (!map.getPane("cityPane")) map.createPane("cityPane");
     if (!map.getPane("countryPane")) map.createPane("countryPane");
-    if (!map.getPane("empirePane")) map.createPane("empirePane");
+    // if (!map.getPane("empirePane")) map.createPane("empirePane");
     map.getPane("palacePane").style.zIndex = 450;
     map.getPane("palacePane").style.pointerEvents = "none";
     // map.getPane("cityPane").style.zIndex = 400;
-    map.getPane("empirePane").style.zIndex = 300;
+    // map.getPane("empirePane").style.zIndex = 300;
     map.getPane("countryPane").style.zIndex = 250;
   }
 
@@ -771,45 +771,45 @@ class LayerManager {
   //   }).addTo(map);
   // }
 
-  async loadEmpirePolygon() {
-    const map = this.getMap();
-    if (!map) return;
-    try {
-      const response = await fetch("assets/empire.geojson");
-      const data = await response.json();
-      this.empire = L.geoJSON(data, {
-        pane: "empirePane",
-        style: (feature) => {
-          const name = feature.properties.NAME;
-          let fillColor = "#ffffffff"; // 默认颜色（灰色）
+  // async loadEmpirePolygon() {
+  //   const map = this.getMap();
+  //   if (!map) return;
+  //   try {
+  //     const response = await fetch("assets/empire.geojson");
+  //     const data = await response.json();
+  //     this.empire = L.geoJSON(data, {
+  //       pane: "empirePane",
+  //       style: (feature) => {
+  //         const name = feature.properties.NAME;
+  //         let fillColor = "#ffffffff"; // 默认颜色（灰色）
 
-          if (name === "French") {
-            fillColor = "#EAC170";
-          } else if (name === "British") {
-            fillColor = "#D5E2EC";
-          } else if (name === "Portugal") {
-            fillColor = "#EAC170";
-          }
+  //         if (name === "French") {
+  //           fillColor = "#EAC170";
+  //         } else if (name === "British") {
+  //           fillColor = "#D5E2EC";
+  //         } else if (name === "Portugal") {
+  //           fillColor = "#EAC170";
+  //         }
 
-          return {
-            color: fillColor, // 边界线颜色
-            weight: 1.5, // 边界线宽度
-            opacity: 0.4,
-            // fillColor: fillColor, // 填充色
-            // fillOpacity: 0.4,
-            fill: false,
-          };
-        },
-        onEachFeature: (feature, layer) => {
-          const name = feature.properties.NAME;
-          // 绑定弹窗，显示 NAME
-          layer.bindPopup(`<b>${name}</b>`);
-        },
-      }).addTo(map);
-    } catch (err) {
-      console.error("Failed to load empire polygon:", err);
-    }
-  }
+  //         return {
+  //           color: fillColor, // 边界线颜色
+  //           weight: 1.5, // 边界线宽度
+  //           opacity: 0.4,
+  //           // fillColor: fillColor, // 填充色
+  //           // fillOpacity: 0.4,
+  //           fill: false,
+  //         };
+  //       },
+  //       onEachFeature: (feature, layer) => {
+  //         const name = feature.properties.NAME;
+  //         // 绑定弹窗，显示 NAME
+  //         layer.bindPopup(`<b>${name}</b>`);
+  //       },
+  //     }).addTo(map);
+  //   } catch (err) {
+  //     console.error("Failed to load empire polygon:", err);
+  //   }
+  // }
 
   async loadCountryPolygon() {
     const map = this.getMap();
