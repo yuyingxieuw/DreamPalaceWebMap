@@ -20,6 +20,7 @@ class WebMapApp {
     this.mapManager.addSpilhausTiles();
     this.mapManager.loadSpilhausCountries();
     this.mapManager.loadSpilhausPalace();
+    this.mapManager.spilhausCenterSwitch();
     this.mapManager.activate("spilhaus");
     this.layerManager.loadForProjection("spilhaus");
     this.uiManager.initFilterEvents();
@@ -30,6 +31,7 @@ class WebMapApp {
 class MapManager {
   constructor(app) {
     this.app = app;
+    this.document = document;
     // DOM
     this.containerSpilhaus = "mapSpilhaus";
     this.containerWgs = "mapWgs";
@@ -47,6 +49,7 @@ class MapManager {
     this.spilhausCountryLayers = [];
     // setveiw
     this.spilhausStart = { center: [-1590000, -14000000], zoom: 2 };
+    this.spilhausFocus = { center: [-100, -14000000], zoom: 2 };
     this.wgsDefaultZoom = 4;
     // country centroid
     this.countryCentroid = {
@@ -241,6 +244,7 @@ class MapManager {
                 },
                 click: () => {
                   this._switchToWgsUsingCentroid(key);
+                  this.spilhausToDefault(); //取消所有的平移
                   this.app.uiManager.handleAreaInfoShift(key);
                 },
               });
@@ -281,6 +285,33 @@ class MapManager {
       }).addTo(this.mapSpilhaus);
     } catch (err) {
       console.error("Failed to load palace point spilhaus data", err);
+    }
+  }
+
+  spilhausCenterSwitch() {
+    const collapsedButton = this.document.querySelector(".triangle-left");
+    const expandButton = this.document.querySelector(".triangle-right");
+    const mapEl = this.mapSpilhaus.getContainer();
+    console.log(mapEl);
+    // collaspe
+    if (collapsedButton) {
+      collapsedButton.addEventListener("click", () => {
+        mapEl.classList.add("map-shifted-to-left");
+      });
+    }
+    //expand
+    if (expandButton) {
+      expandButton.addEventListener("click", () => {
+        this.spilhausToDefault();
+      });
+    }
+  }
+
+  spilhausToDefault() {
+    const mapEl = this.mapSpilhaus.getContainer();
+    const classList = mapEl.classList;
+    if (classList.contains("map-shifted-to-left")) {
+      classList.remove("map-shifted-to-left");
     }
   }
 

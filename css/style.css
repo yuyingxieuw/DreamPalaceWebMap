@@ -48,6 +48,11 @@ body {
   pointer-events: auto;
   display: block;
   background: #000 !important;
+  transition: transform 1.5s ease;
+}
+
+.map-shifted-to-left {
+  transform: translateX(-350px);
 }
 
 #mapWgs {
