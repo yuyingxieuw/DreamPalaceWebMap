@@ -292,7 +292,7 @@ class MapManager {
     const collapsedButton = this.document.querySelector(".triangle-left");
     const expandButton = this.document.querySelector(".triangle-right");
     const mapEl = this.mapSpilhaus.getContainer();
-    console.log(mapEl);
+    // console.log(mapEl);
     // collaspe
     if (collapsedButton) {
       collapsedButton.addEventListener("click", () => {
@@ -423,7 +423,7 @@ class DataManager {
   }
 
   async fetchData() {
-    //fetch geojson datat for wgs palace
+    //fetch geojson data for wgs palace
     try {
       const response_wgs = await fetch(
         "https://dreampalacemapapp.onrender.com/api/palaces_wgs.geojson"
@@ -432,7 +432,7 @@ class DataManager {
     } catch (err) {
       console.log("Failed to fetch geojson_wgs data");
     }
-    // fetch geojson data for spil (note this data only have name and latlng)
+    // fetch geojson data for spil (note: this data only have name and latlng)
     try {
       const response_spil = await fetch(
         "https://dreampalacemapapp.onrender.com/api/palaces_spil.geojson"
@@ -451,7 +451,7 @@ class DataManager {
     };
   }
 
-  // filter original data -- >. go to data manager
+  // filter original data
   filterData() {
     const filters = this.getCombinedFilters();
 
@@ -502,7 +502,7 @@ class LayerManager {
     window.addEventListener("yearFiltered", (e) => {
       const filtered = e.detail.filtered;
       console.log("LayerManager received filtered:", filtered.length);
-      this.reloadPalacePoints(filtered);
+      this.loadPalacePoints(filtered);
     });
   }
 
@@ -513,7 +513,7 @@ class LayerManager {
     }
     this._initPanesWGS();
     this.loadBasemapWGS();
-    this.reloadPalacePoints();
+    this.loadPalacePoints();
     window.dispatchEvent(
       new CustomEvent("projectionready", {
         detail: { projection: "wgs" },
@@ -564,18 +564,22 @@ class LayerManager {
   }
 
   // load original data (all year/ all data)
-  loadPalaceData() {
-    this.originalData = this.app.dataManager.geojson_wgs;
-    // console.log("Original data loaded:", this.originalData);
-    this.app.uiManager.populateDropdowns(this.originalData);
-    this.reloadPalacePoints();
-  }
-  catch(err) {
-    console.error("Failed to load palace data", err);
-  }
+  // loadPalaceData() {
+  //   console.log("DEBUG: loadPalaceData() START");
+  //   try {
+  //     this.originalData = this.app.dataManager.geojson_wgs;
+  //     console.log("Original data loaded:", this.originalData);
+  //     this.app.uiManager.populateDropdowns(this.originalData);
+  //     console.log("populatedropdowns inits");
+  //     this.loadPalacePoints();
+  //   } catch (err) {
+  //     console.error("Failed to load palace data", err);
+  //   }
+  // }
 
   //render layer
   renderPalaceLayer(filteredFeatures) {
+    // render points
     const map = this.getMap();
     if (!map) return;
 
@@ -591,15 +595,15 @@ class LayerManager {
   }
 
   // update map
-  reloadPalacePoints() {
+  loadPalacePoints() {
     const map = this.getMap();
     const proj = this.getProj();
     if (proj !== "wgs") {
-      // console.log("Skip reloadPalacePoints(): not WGS");
+      // console.log("Skip loadPalacePoints(): not WGS");
       return;
     }
     if (!map) {
-      console.warn("Map not ready yet, skip reloadPalacePoints()");
+      console.warn("Map not ready yet, skip loadPalacePoints()");
       return;
     }
 
@@ -653,7 +657,7 @@ class LayerManager {
     });
 
     marker.on("click", () => {
-      const message = this.generatePointMsg(attr);
+      const message = this.app.uiManager.generatePointMsg(attr);
       this.app.uiManager.initSideBar(); // in case it's collapsed
       // handel when dataquery is shown
       const el = document.querySelector("#data_container");
@@ -661,7 +665,8 @@ class LayerManager {
       //console.log("是否隐藏：", isHidden);
       if (!isHidden) this.app.uiManager.showElement("#data_query_window");
       this.app.uiManager.handleAboutPalaceClick();
-      $("#data_query_window").html(message);
+      document.querySelector("#data_query_window").innerHTML = message;
+      this.app.uiManager.bindCarouselDots();
       // can add setview but it's too much move
       // const location = latlng;
       // this.app.mapManager.setView(location, 8);
@@ -700,7 +705,7 @@ class LayerManager {
     });
 
     marker.on("click", () => {
-      const message = this.generatePointMsg(attr);
+      const message = this.app.uiManager.generatePointMsg(attr); // should return html code
       this.app.uiManager.initSideBar(); // in case it's collapsed
       // handel when dataquery is shown
       const el = document.querySelector("#data_container");
@@ -708,37 +713,13 @@ class LayerManager {
       //console.log("是否隐藏：", isHidden);
       if (!isHidden) this.app.uiManager.showElement("#data_query_window");
       this.app.uiManager.handleAboutPalaceClick();
-      $("#data_query_window").html(message);
+      document.querySelector("#data_query_window").innerHTML = message;
+      this.app.uiManager.bindCarouselDots();
       // can add setview but it's too much move
       // const location = latlng;
       // this.app.mapManager.setView(location, 8);
     });
     return marker;
-  }
-
-  generatePointMsg(data) {
-    return (
-      "Theater:&nbsp" +
-      data.Name +
-      "<br> Address:&nbsp" +
-      data.Address +
-      "<br> City:&nbsp" +
-      data.City +
-      "<br> State:&nbsp" +
-      data["State / Province"] +
-      "<br> ZIP Code:&nbsp" +
-      data.ZIP +
-      "<br> Current Status:&nbsp" +
-      (data["Condition"] ? data["Condition"] : "Unknown") +
-      "<br> Year of Existence:&nbsp" +
-      (data["createdTime"] ? data.Creation : "Unknown") +
-      "&nbsp-&nbsp" +
-      (data.Closure ? data.Closure : "Unknown")
-      // "<br> Website:&nbsp" +
-      // (data.Website ? data.Website : "Unknown") +
-      // "<br> Notes:&nbsp" +
-      // (data.Notes ? data.Notes : "Unknown")
-    );
   }
 
   //暂时停止city polygon 展示
@@ -1037,6 +1018,9 @@ class UIManager {
 
   // filter event
   initFilterEvents() {
+    this.originalData = this.app.dataManager.geojson_wgs;
+    this.app.uiManager.populateDropdowns(this.originalData);
+    //when filter changes
     const ids = [
       "filter-country",
       "filter-city",
@@ -1048,7 +1032,7 @@ class UIManager {
       const el = document.getElementById(id);
       if (el) {
         el.addEventListener("change", () => {
-          this.app.layerManager.reloadPalacePoints();
+          this.app.layerManager.loadPalacePoints();
         });
       }
     });
@@ -1057,7 +1041,7 @@ class UIManager {
     if (cleanBtn) {
       cleanBtn.addEventListener("click", () => {
         this.resetFilter();
-        this.app.layerManager.reloadPalacePoints();
+        this.app.layerManager.loadPalacePoints();
       });
     }
   }
@@ -1076,7 +1060,6 @@ class UIManager {
 
   populateDropdowns(geojson) {
     const features = geojson.features;
-
     // set country and it's own cities
     const countryCityMap = {};
     for (const f of features) {
@@ -1099,7 +1082,6 @@ class UIManager {
     const countries = Object.keys(countryCityMap);
 
     // other filter selector
-
     const unique = (field) => {
       const values = features.flatMap((f) => {
         const v = f.properties[field];
@@ -1149,6 +1131,117 @@ class UIManager {
     };
   }
 
+  // generate palace info
+  parseCommaLinks(value) {
+    // in case there are many pic links
+    if (!value) return [];
+    return String(value)
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
+
+  driveLinkToImage(shareUrl) {
+    const m = shareUrl.match(/\/file\/d\/([^/]+)/);
+    if (!m) throw new Error("Not a google drive file share link");
+    const fileId = m[1];
+    return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1200`;
+  }
+
+  generatePointMsg(data) {
+    const raw = (data["Image Links"] || "").trim();
+    const shareUrls = this.parseCommaLinks(raw);
+    let imageUrls = [];
+    for (const u of shareUrls) {
+      try {
+        imageUrls.push(this.driveLinkToImage(u));
+      } catch (e) {
+        console.warn("invalid image link:", u);
+      }
+    }
+
+    const safeId = String(data.airtable_id || data.Name || "item").replace(
+      /\W+/g,
+      "_"
+    );
+    const hasImages = imageUrls.length > 0;
+    const first = hasImages ? imageUrls[0] : "";
+    const dotsHtml =
+      imageUrls.length > 1
+        ? `<div class="dots" data-target="${safeId}">
+          ${imageUrls
+            .map(
+              (_, i) =>
+                `<button class="dot ${
+                  i === 0 ? "active" : ""
+                }" data-idx="${i}" aria-label="image ${i + 1}"></button>`
+            )
+            .join("")}
+        </div>`
+        : "";
+
+    const imageHtml = hasImages
+      ? `
+        <div class="carousel" id="carousel_${safeId}" data-images='${JSON.stringify(
+          imageUrls
+        )}'>
+          <img
+            id="palace_img_${safeId}"
+            src="${first}"
+            alt="image"
+            style="display:block; max-width:90%; height:auto;"
+          />
+          ${dotsHtml}
+        </div>
+      `
+      : `<span class="no-image">/</span>`;
+
+    return `
+    <h3> ${data.Name || ""} </h3>
+    <h4> ${data.City || ""},&nbsp; ${data.Country}</h4>
+    <h5> ${data["Creation"] || "/"} - ${data["Closure"] || "/"} </h5>
+    <p> ${data.Condition || ""} </p>
+    <div class="image-container">
+      ${imageHtml}
+    </div>
+    <p style= "max-width:90%"> ${data.Notes || ""} </p>
+    <p style= "max-width:90%"> ${data["Additional resources"] || ""} </p>
+    `;
+  }
+
+  bindCarouselDots() {
+    const root = document.querySelector("#data_query_window");
+    if (!root) return;
+
+    const carousel = root.querySelector(".carousel");
+    if (!carousel) return;
+
+    const img = carousel.querySelector("img");
+    if (!img) return;
+
+    let images = [];
+    try {
+      images = JSON.parse(carousel.getAttribute("data-images") || "[]");
+    } catch {
+      images = [];
+    }
+    if (images.length <= 1) return;
+
+    const dots = carousel.querySelectorAll(".dot");
+    dots.forEach((dot) => {
+      dot.addEventListener("click", () => {
+        const idx = Number(dot.getAttribute("data-idx"));
+        if (!Number.isInteger(idx) || !images[idx]) return;
+
+        img.src = images[idx];
+
+        dots.forEach((d) => d.classList.remove("active"));
+        dot.classList.add("active");
+      });
+    });
+  }
+
+  // back to ocean bottom
   backtoocean() {
     const el = document.querySelector("#back");
     if (!el) return;
@@ -1373,7 +1466,7 @@ class TimelineManager {
       yearDisplay.textContent = `Year: ${value}`;
     }
     // inform layermanager
-    this.app.layerManager.reloadPalacePoints();
+    this.app.layerManager.loadPalacePoints();
   }
 
   getTimeFilters() {
