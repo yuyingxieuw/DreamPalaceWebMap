@@ -666,7 +666,8 @@ class LayerManager {
       if (!isHidden) this.app.uiManager.showElement("#data_query_window");
       this.app.uiManager.handleAboutPalaceClick();
       document.querySelector("#data_query_window").innerHTML = message;
-      this.app.uiManager.bindCarouselDots();
+      this.app.uiManager.enableCarouselInSidebar();
+      console.log("carsouldconnect init");
       // can add setview but it's too much move
       // const location = latlng;
       // this.app.mapManager.setView(location, 8);
@@ -714,7 +715,7 @@ class LayerManager {
       if (!isHidden) this.app.uiManager.showElement("#data_query_window");
       this.app.uiManager.handleAboutPalaceClick();
       document.querySelector("#data_query_window").innerHTML = message;
-      this.app.uiManager.bindCarouselDots();
+      this.app.uiManager.enableCarouselInSidebar();
       // can add setview but it's too much move
       // const location = latlng;
       // this.app.mapManager.setView(location, 8);
@@ -1151,7 +1152,7 @@ class UIManager {
   generatePointMsg(data) {
     const raw = (data["Image Links"] || "").trim();
     const shareUrls = this.parseCommaLinks(raw);
-    let imageUrls = [];
+    let imageUrls = []; // save all image urls
     for (const u of shareUrls) {
       try {
         imageUrls.push(this.driveLinkToImage(u));
@@ -1159,21 +1160,20 @@ class UIManager {
         console.warn("invalid image link:", u);
       }
     }
-
     const safeId = String(data.airtable_id || data.Name || "item").replace(
       /\W+/g,
       "_"
     );
     const hasImages = imageUrls.length > 0;
     const first = hasImages ? imageUrls[0] : "";
-    const dotsHtml =
+    const dotsHtml = //create dots msg
       imageUrls.length > 1
         ? `<div class="dots" data-target="${safeId}">
           ${imageUrls
             .map(
               (_, i) =>
-                `<button class="dot ${
-                  i === 0 ? "active" : ""
+                `<button class="dot${
+                  i === 0 ? " active" : ""
                 }" data-idx="${i}" aria-label="image ${i + 1}"></button>`
             )
             .join("")}
@@ -1182,15 +1182,18 @@ class UIManager {
 
     const imageHtml = hasImages
       ? `
-        <div class="carousel" id="carousel_${safeId}" data-images='${JSON.stringify(
+        <div class="carousel" data-carousel="${safeId}" data-images='${JSON.stringify(
           imageUrls
         )}'>
+        <button class="carousel-arrow left" data-dir="prev" data-carousel="${safeId}">&#10094;</button>
           <img
+            class = "img"
             id="palace_img_${safeId}"
             src="${first}"
             alt="image"
             style="display:block; max-width:90%; height:auto;"
           />
+          <button class="carousel-arrow right" data-dir="next" data-carousel="${safeId}">&#10095;</button>
           ${dotsHtml}
         </div>
       `
@@ -1209,36 +1212,76 @@ class UIManager {
     `;
   }
 
-  bindCarouselDots() {
+  enableCarouselInSidebar() {
     const root = document.querySelector("#data_query_window");
-    if (!root) return;
-
-    const carousel = root.querySelector(".carousel");
-    if (!carousel) return;
-
-    const img = carousel.querySelector("img");
-    if (!img) return;
-
-    let images = [];
-    try {
-      images = JSON.parse(carousel.getAttribute("data-images") || "[]");
-    } catch {
-      images = [];
+    if (!root) {
+      return;
     }
-    if (images.length <= 1) return;
+    if (root.__carouselBound) {
+      return;
+    }
 
-    const dots = carousel.querySelectorAll(".dot");
-    dots.forEach((dot) => {
-      dot.addEventListener("click", () => {
-        const idx = Number(dot.getAttribute("data-idx"));
-        if (!Number.isInteger(idx) || !images[idx]) return;
+    root.addEventListener("click", (e) => {
+      //DOTS
+      const dot = e.target.closest(".dot");
+      if (dot) {
+        const idx = Number(dot.dataset.idx);
+        const carouselKey = dot.closest(".dots").dataset.target;
+        this.switchCarouselImage(root, carouselKey, idx);
+        return;
+      }
 
-        img.src = images[idx];
-
-        dots.forEach((d) => d.classList.remove("active"));
-        dot.classList.add("active");
-      });
+      // ARROW
+      const arrow = e.target.closest(".carousel-arrow");
+      if (arrow) {
+        console.log("DEBUG: ARROW CLICK matched", arrow.dataset.dir);
+        const dir = arrow.dataset.dir;
+        const carouselKey = arrow.dataset.carousel;
+        console.log(`DEBUG: arrow key = `, carouselKey);
+        this.shiftCarouselImage(root, carouselKey, dir);
+      }
     });
+  }
+
+  switchCarouselImage(root, key, idx) {
+    // helper for dots to switch image
+    const carousel = root.querySelector(`.carousel[data-carousel="${key}"]`);
+    if (!carousel) return;
+    const images = JSON.parse(carousel.dataset.images || "[]");
+    if (!images[idx]) return;
+    const img = carousel.querySelector(".img");
+    img.src = images[idx];
+
+    // update dots
+    const dots = carousel.querySelectorAll(".dot");
+    dots.forEach((d) => d.classList.remove("active"));
+    const activeDot = carousel.querySelector(`.dot[data-idx="${idx}"]`);
+    if (activeDot) activeDot.classList.add("active");
+  }
+
+  shiftCarouselImage(root, key, dir) {
+    //helper to shft picture
+    //find carousel
+    const carousel = root.querySelector(`.carousel[data-carousel="${key}"]`);
+    if (!carousel) return;
+    // get images
+    const images = JSON.parse(carousel.dataset.images || "[]");
+    if (images.length === 0) return;
+    const img = carousel.querySelector(".img");
+
+    //current imgage
+    const currentIdx = images.indexOf(img.src);
+    let nextIdx = currentIdx;
+    if (dir === "next") nextIdx = (currentIdx + 1) % images.length;
+    else if (dir === "prev")
+      nextIdx = (currentIdx - 1 + images.length) % images.length;
+    //shift image
+    img.src = images[nextIdx];
+    // update dots
+    const dots = carousel.querySelectorAll(".dot");
+    dots.forEach((d) => d.classList.remove("active"));
+    const activateDot = carousel.querySelector(`.dot[data-idx="${nextIdx}"]`);
+    if (activateDot) activateDot.classList.add("active");
   }
 
   // back to ocean bottom
