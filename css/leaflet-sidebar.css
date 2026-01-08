@@ -568,6 +568,17 @@
   position: relative;
 }
 
+.carousel .img-wrapper {
+  width: 510px;
+  height: 280px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #040404; /* 如果小图留空区域，会显示这个背景 */
+  border-radius: 6px;
+}
+
 .carousel-arrow {
   position: absolute;
   top: 50%;

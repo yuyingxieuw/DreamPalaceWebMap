@@ -1080,7 +1080,7 @@ class UIManager {
     }
 
     // all countries
-    const countries = Object.keys(countryCityMap);
+    const countries = Object.keys(countryCityMap).sort();
 
     // other filter selector
     const unique = (field) => {
@@ -1146,7 +1146,7 @@ class UIManager {
     const m = shareUrl.match(/\/file\/d\/([^/]+)/);
     if (!m) throw new Error("Not a google drive file share link");
     const fileId = m[1];
-    return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1200`;
+    return `https://lh3.googleusercontent.com/d/${fileId}=w1200`;
   }
 
   generatePointMsg(data) {
@@ -1186,13 +1186,15 @@ class UIManager {
           imageUrls
         )}'>
         <button class="carousel-arrow left" data-dir="prev" data-carousel="${safeId}">&#10094;</button>
-          <img
+        <div class="img-wrapper">
+        <img
             class = "img"
             id="palace_img_${safeId}"
             src="${first}"
             alt="image"
             style="display:block; max-width:90%; height:auto;"
           />
+          </div>
           <button class="carousel-arrow right" data-dir="next" data-carousel="${safeId}">&#10095;</button>
           ${dotsHtml}
         </div>
@@ -1234,10 +1236,8 @@ class UIManager {
       // ARROW
       const arrow = e.target.closest(".carousel-arrow");
       if (arrow) {
-        console.log("DEBUG: ARROW CLICK matched", arrow.dataset.dir);
         const dir = arrow.dataset.dir;
         const carouselKey = arrow.dataset.carousel;
-        console.log(`DEBUG: arrow key = `, carouselKey);
         this.shiftCarouselImage(root, carouselKey, dir);
       }
     });
@@ -1268,7 +1268,6 @@ class UIManager {
     const images = JSON.parse(carousel.dataset.images || "[]");
     if (images.length === 0) return;
     const img = carousel.querySelector(".img");
-
     //current imgage
     const currentIdx = images.indexOf(img.src);
     let nextIdx = currentIdx;
