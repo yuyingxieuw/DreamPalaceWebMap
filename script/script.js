@@ -754,7 +754,7 @@ class LayerManager {
   // }
 
   // async loadEmpirePolygon() {
-  // don't delete in case need it 
+  // don't delete in case need it
   //   const map = this.getMap();
   //   if (!map) return;
   //   try {

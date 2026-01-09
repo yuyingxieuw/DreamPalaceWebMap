@@ -21,7 +21,7 @@ body {
   width: 100%;
   height: 80px;
   display: flex;
-  background: #141204;
+  background: black;
   justify-content: center; /* 水平居中 */
   align-items: center;
   backdrop-filter: blur(6px);
