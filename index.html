@@ -114,6 +114,9 @@
                             <select id="filter-city" class="filter-select inactive">
                                 <option value="" selected disabled>City</option>
                             </select>
+                            
+                            <!-- for space-->
+                            <div></div>
 
                             <!-- Condition -->
                             <select id="filter-condition" class="filter-select">
@@ -128,8 +131,6 @@
                             <!-- Clean filter -->
                             <button id="btn-clean-filter" class="btn-clean">Reset</button>
 
-                            <!-- Current Focus Area -->
-                            <div id="focus-area">
                         </div>
 
                         <!-- WGS project menu level 2  -->
@@ -137,26 +138,27 @@
                             <a class="level_2_menu" id="about_area" href="#">About Area +</a>
                             <a class="level_2_menu" id="about_palace" href="#">About Palace -</a> 
                         </div>
-                        <!-- Area Info Card -->
-                        <div id = "area_info">
-                            <p id = "area_info_text" style="color: aliceblue;"> </p>
+                        
+                        <!-- ALL CONTENT -->
+                        <div id="sidebar-content">
+                            <!-- Area Info Card -->
+                            <div id = "area_info">
+                                <p id = "area_info_text" style="color: aliceblue;"> </p>
+                            </div>
+                            <!-- Query Result -->
+                            <div id = "data_query_window">
+                                <p style="color: aliceblue;">Click any point in the map to investigate dream palace.</p>
+                            </div>
                         </div>
-                        <!-- Query Result -->
-                        <div id = "data_query_window">
-                            <p style="color: aliceblue;">Click any point in the map to investigate dream palace.</p>
-                        </div>
-
                           <!-- back to main buttom-->
-                    </div>
-                    
-                    <div id = "backtospilhaus">
+                        <div id = "backtospilhaus">
                         <a id="back" href="#">Back</a>
                     </div> 
                 </div>
-            </div> 
-        </div>
+            </div>
+        </div> 
     </div>
-    </div>
+</div>
 
     <!-- map part -->
     <div class = "map-container">

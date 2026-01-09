@@ -436,11 +436,17 @@
 
 /* filter 卡 */
 #filter-card {
-  display: block;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 0.8rem 1rem;
   font-size: 14px;
   width: 100%;
   margin-top: 15px;
+}
+#filter-card > * {
+  grid-row: auto;
+  grid-column: auto;
 }
 
 .filter-select {
