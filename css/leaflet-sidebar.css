@@ -381,14 +381,8 @@
 #scroll-area {
   flex: 1;
   overflow-y: auto;
-  height: 450px;
-}
-
-#scroll-area {
-  flex: 1;
-  overflow-y: auto;
   overflow-x: hidden;
-  height: 600px;
+  height: 800px;
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
 }
