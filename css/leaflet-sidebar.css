@@ -382,7 +382,7 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  height: 800px;
+  height: 1900px;
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
 }
