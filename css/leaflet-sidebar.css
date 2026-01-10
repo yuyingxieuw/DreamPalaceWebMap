@@ -631,7 +631,7 @@
 } */
 
 .carousel .img-wrapper {
-  width: 500px;
+  width: 510px;
   height: 280px;
   overflow: hidden;
   display: flex;
@@ -672,7 +672,7 @@
   padding-top: 6px;
 }
 .menu-divider {
-  width: 98%;
+  width: 100%;
   height: 0.7px;
   background-color: white;
   margin-top: 10px;
