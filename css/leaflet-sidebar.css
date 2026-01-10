@@ -388,7 +388,7 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  height: 450px;
+  height: 600px;
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
 }
