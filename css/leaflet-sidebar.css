@@ -30,7 +30,6 @@
   top: 0;
   bottom: 0;
   width: 100%;
-  overflow: scroll;
   z-index: 1000;
   background-color: black;
   /* transition: width 1.5s ease !important; */
@@ -153,8 +152,6 @@
   top: 0;
   bottom: 0;
   background-color: black;
-  overflow-x: hidden;
-  overflow-y: auto;
 }
 
 .sidebar-left .sidebar-content {
@@ -379,15 +376,51 @@
 }
 
 /* WGS Sidebar Part */
+/* 可滚动内容区 */
+
+#scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  height: 450px;
+}
+
+#scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 450px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+/* Chrome / Edge / Safari */
+#scroll-area::-webkit-scrollbar {
+  width: 1px;
+}
+
+#scroll-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#scroll-area::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+#scroll-area::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
 
 #wgs_sidebar {
-  display: none;
+  display: flex;
+  flex-direction: column;
 }
 
 .data_container {
   height: 80px;
   padding-right: 40px;
 }
+
 #time-control {
   position: relative;
   background: transparent;
@@ -532,59 +565,9 @@
   /* box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2); */
 }
 
-#level_2_menu_group {
-  margin-top: 20px;
-}
-.level_2_menu {
-  text-decoration: none;
-  position: relative;
-  padding-bottom: 5px;
-  color: white;
-  margin-left: 18%;
-}
-
-.level_2_menu:link {
-  color: white;
-}
-
-.level_2_menu:visited {
-  color: white;
-}
-
-.level_2_menu:hover {
-  color: #fdf9ed;
-
-  text-decoration: none;
-}
-
-.level_2_menu::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 0%;
-  height: 2px;
-  background-color: white;
-  transition: width 0.3s ease;
-}
-
-.level_2_menu:hover:after {
-  width: 100%;
-  text-decoration: none;
-}
-
-.level_2_menu:activate:after {
-  width: 100%;
-}
-
-#data_query_window {
-  color: white;
-  margin-top: 20px;
-}
-
 #area_info {
   color: white;
-  margin-top: 20px;
+  padding-top: 8px;
   font-family: var(--font-family);
 }
 
@@ -596,39 +579,39 @@
   border-radius: 6px;
 }
 
-/* back button  */
-
-#backtospilhaus {
-  display: block;
-  margin-top: 20px;
-  text-align: right;
-  padding-right: 10px;
-  cursor: pointer;
-}
-
-#back {
-  margin-right: 8px;
-  color: white;
-  text-decoration: none;
-  font-size: 16px;
-  font-family: "Basis", sans-serif;
-}
-
-#back:hover {
-  color: #90d5ff;
-}
-
-.triangle-right {
-  width: 0;
-  height: 0;
-  border-top: 6px solid transparent;
-  border-bottom: 6px solid transparent;
-  border-left: 8px solid white;
-  cursor: pointer;
-  margin-top: 22px;
-}
-
+/* point message below - generate through JS script  */
 /* palace info picture  */
+#data_query_window {
+  padding-top: 0px;
+  font-size: 14px; /* ★ 最大字号 */
+  line-height: 1.4; /* 可读性 */
+  font-family: "Basis", sans-serif;
+  color: #fdf9ed;
+}
+
+#data_query_window h3 {
+  font-size: 16px; /* 比正文稍大 */
+  font-weight: 400;
+  margin-bottom: 6px;
+}
+
+#data_query_window h4 {
+  font-size: 14px; /* 正文大小 */
+  margin-bottom: 6px;
+}
+
+#data_query_window h5 {
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+#data_query_window p {
+  font-size: 12px; /* 正文 */
+  margin-top: 5px;
+  margin-bottom: 15px;
+  max-width: 100%; /* 你 JS 里写的 max-width 可搬到 CSS */
+}
+
 .dots {
   display: flex;
   gap: 8px;
@@ -647,12 +630,14 @@
   background: #bbb;
 }
 
-.carousel {
+/* .carousel {
   position: relative;
-}
+  font-family: "Basis", sans-serif;
+  font-weight: 300;
+} */
 
 .carousel .img-wrapper {
-  width: 510px;
+  width: 500px;
   height: 280px;
   overflow: hidden;
   display: flex;
@@ -675,13 +660,95 @@
 }
 
 .carousel-arrow.left {
-  left: 5px;
+  left: 0px;
 }
 
 .carousel-arrow.right {
-  right: 60px;
+  right: 8px;
 }
 
 .carousel-arrow:hover {
   background: rgba(255, 255, 255, 0.7);
+}
+
+/* footer and back button  */
+#sidebar-footer {
+  flex-shrink: 0; /* ★ 防止被挤压 */
+  padding-bottom: 10px;
+  padding-top: 6px;
+}
+.menu-divider {
+  width: 98%;
+  height: 0.7px;
+  background-color: white;
+  margin-top: 10px;
+  margin-bottom: 3px;
+}
+
+#level_2_menu_group {
+  padding-top: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 40px;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: "Basis", sans-serif;
+  color: white;
+  padding-bottom: 10px;
+  padding-right: 50px;
+}
+
+/* 所有状态默认白色，没有下划线 */
+.level_2_menu,
+.level_2_menu:link,
+.level_2_menu:visited,
+.level_2_menu:active,
+.level_2_menu:focus {
+  color: white;
+  text-decoration: none !important;
+}
+
+/* hover、active、focus → 蓝色 */
+.level_2_menu:hover,
+.level_2_menu:active,
+.level_2_menu:focus {
+  color: #4f9cfb;
+}
+
+#back {
+  position: relative;
+  padding-right: 15px; /* 给箭头留空间 */
+}
+
+#back::after {
+  content: "->"; /* ← 换成别的箭头 */
+  font-size: 16px;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: inherit; /* 和 Back 同颜色 */
+  transition: color 0s ease;
+  color: white;
+  background-color: black;
+}
+
+/* Hover 需要同步：文字变色 → 箭头也跟着变色 */
+#back:hover {
+  color: #4f9cfb; /* 你的 hover 颜色 */
+}
+
+#back:hover::after {
+  color: #4f9cfb; /* 箭头跟着变色 */
+}
+
+.triangle-right {
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 8px solid white;
+  cursor: pointer;
+  margin-top: 22px;
 }

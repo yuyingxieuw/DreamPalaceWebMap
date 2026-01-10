@@ -650,8 +650,8 @@ class LayerManager {
       radius: 2.1,
       fillOpacity: 0.9,
       opacity: 0.6,
-      weight: 1,
-      fillColor: status === "Still Standing" ? "#0077b6" : "#00b4d8",
+      weight: 0.7,
+      fillColor: status === "Still Standing" ? "#398ff9ff" : "#4f9cfb",
       color: status === "Still Standing" ? "#f4f2f2ff" : "#ffffffff",
       pane: "palacePane",
     });
@@ -1193,7 +1193,7 @@ class UIManager {
             id="palace_img_${safeId}"
             src="${first}"
             alt="image"
-            style="display:block; max-width:90%; height:auto;"
+            style="display:block; height:auto;"
           />
           </div>
           <button class="carousel-arrow right" data-dir="next" data-carousel="${safeId}">&#10095;</button>
@@ -1210,8 +1210,8 @@ class UIManager {
     <div class="image-container">
       ${imageHtml}
     </div>
-    <p style= "max-width:90%"> ${data.Notes || ""} </p>
-    <p style= "max-width:90%"> ${data["Additional resources"] || ""} </p>
+    <p > ${data.Notes || ""} </p>
+    <p > ${data["Additional resources"] || ""} </p>
     `;
   }
 
