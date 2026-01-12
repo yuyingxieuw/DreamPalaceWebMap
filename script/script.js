@@ -934,6 +934,10 @@ class UIManager {
     document.querySelector(selector).style.display = "block";
   }
 
+  showElementFlex(selector) {
+    document.querySelector(selector).style.display = "flex";
+  }
+
   hideElement(selector) {
     document.querySelector(selector).style.display = "none";
   }
@@ -945,7 +949,7 @@ class UIManager {
     }
     if (this.projection === "wgs") {
       this.hideElement("#spilhaus_sidebar");
-      this.showElement("#wgs_sidebar");
+      this.showElementFlex("#wgs_sidebar");
     }
   }
 
@@ -985,7 +989,7 @@ class UIManager {
     document.querySelector("#about_area").textContent = "About Area +";
     document.querySelector("#about_palace").textContent = "About Palace -";
     this.hideElement("#spilhaus_sidebar");
-    this.showElement("#wgs_sidebar");
+    this.showElementFlex("#wgs_sidebar");
     this.showElement("#area_info");
     this.hideElement("#data_query_window");
   }
@@ -994,7 +998,7 @@ class UIManager {
     document.querySelector("#about_area").textContent = "About Area -";
     document.querySelector("#about_palace").textContent = "About Palace +";
     this.hideElement("#spilhaus_sidebar");
-    this.showElement("#wgs_sidebar");
+    this.showElementFlex("#wgs_sidebar");
     this.hideElement("#area_info");
     this.showElement("#data_query_window");
   }

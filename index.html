@@ -92,77 +92,75 @@
                         <p style = "font-family:Basis; font-size: 1.2rem; color: white; "class="explore ">Filter cinemas</p>  
                         <div style = "font-family:Basis; font-size: 1.2rem; color: white;"class="explore "id = "year-display"> Year: all </div>   
                     </div>
-                    <div class="data_container" >
-                        <div id="time-control">
-                                <input 
-                                    type="range" 
-                                    id="timeSlider" 
-                                    min="1900" 
-                                    max="2026" 
-                                    step="1" 
-                                    value="2026"
-                                /> 
-                        </div>
+                    
+                    <div id="time-control">
+                            <input 
+                                type="range" 
+                                id="timeSlider" 
+                                min="1900" 
+                                max="2026" 
+                                step="1" 
+                                value="2026"
+                            /> 
+                    </div>
 
-                        <div id="filter-card">
-                            <!-- Country -->
-                            <select id="filter-country" class="filter-select">
-                                <option value="" selected disabled>Country</option>
-                                </select>
-
-                            <!-- City -->
-                            <select id="filter-city" class="filter-select inactive">
-                                <option value="" selected disabled>City</option>
-                            </select>
-                            
-                            <!-- for space-->
-                            <div></div>
-
-                            <!-- Condition -->
-                            <select id="filter-condition" class="filter-select">
-                                <option value="" selected disabled>Condition</option>
+                    <div id="filter-card">
+                        <!-- Country -->
+                        <select id="filter-country" class="filter-select">
+                            <option value="" selected disabled>Country</option>
                             </select>
 
-                            <!-- Typology -->
-                            <select id="filter-typology" class="filter-select">
-                                <option value="" selected disabled>Typology</option>
-                            </select>
+                        <!-- City -->
+                        <select id="filter-city" class="filter-select inactive">
+                            <option value="" selected disabled>City</option>
+                        </select>
+                        
+                        <!-- for space-->
+                        <div></div>
 
-                            <!-- Clean filter -->
-                            <button id="btn-clean-filter" class="btn-clean">Reset</button>
-                        </div>
+                        <!-- Condition -->
+                        <select id="filter-condition" class="filter-select">
+                            <option value="" selected disabled>Condition</option>
+                        </select>
 
-                        <!-- ALL CONTENT -->
+                        <!-- Typology -->
+                        <select id="filter-typology" class="filter-select">
+                            <option value="" selected disabled>Typology</option>
+                        </select>
+
+                        <!-- Clean filter -->
+                        <button id="btn-clean-filter" class="btn-clean">Reset</button>
+                    </div>
+
+                    <!-- ALL CONTENT -->
+                    
+                    <div id="scroll-area">
                         <div class="menu-divider"></div>
-                        <div id="scroll-area">
-                            <!-- Area Info Card -->
-                            <div id = "area_info">
-                                <p id = "area_info_text" style="color: aliceblue;"> </p>
-                            </div>
-                            <!-- Query Result -->
-                            <div id = "data_query_window">
-                                <p style="color: aliceblue;">Click any point in the map to investigate dream palace.</p>
-                            </div>
+                        <!-- Area Info Card -->
+                        <div id = "area_info">
+                            <p id = "area_info_text" style="color: aliceblue;"> </p>
                         </div>
+                        <!-- Query Result -->
+                        <div id = "data_query_window">
+                            <p style="color: aliceblue;">Click any point in the map to investigate dream palace.</p>
+                        </div>
+                    </div>
                 
                         <!-- Footer : WGS project menu level 2  -->
-                        <div id="sidebar-footer">
-                            <div class="menu-divider"></div>
-                            <div class = "sidebar_menu" id = "level_2_menu_group">
-                                <a class="level_2_menu" id="about_area" href="#">About Area +</a>
-                                <a class="level_2_menu" id="about_palace" href="#">About Palace -</a> 
-                                <!-- back to main buttom-->
-                                <a class = "level_2_menu" id="back" href="#">Back</a>
-                            </div>
+                    <div id="sidebar-footer">
+                        <div class="menu-divider"></div>
+                        <div class = "sidebar_menu" id = "level_2_menu_group">
+                            <a class="level_2_menu" id="about_area" href="#">About Area +</a>
+                            <a class="level_2_menu" id="about_palace" href="#">About Palace -</a> 
+                            <!-- back to main buttom-->
+                            <a class = "level_2_menu" id="back" href="#">Back</a>
                         </div>
+                    </div>
 
-                    </div> 
                 </div>
             </div>
         </div> 
     </div>
-</div>
-
     <!-- map part -->
     <div class = "map-container">
         <div id="mapSpilhaus"></div>
