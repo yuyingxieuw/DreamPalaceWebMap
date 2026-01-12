@@ -246,6 +246,7 @@ class MapManager {
                   this._switchToWgsUsingCentroid(key);
                   this.spilhausToDefault(); //取消所有的平移
                   this.app.uiManager.handleAreaInfoShift(key);
+                  this.eventManager.rebindForProjection("wgs"); // add zoomhandler
                 },
               });
             },
@@ -1394,30 +1395,30 @@ class EventManager {
 
     // 仅在 WGS 下挂载这些控件
     if (mode === "wgs") {
-      this.attachLayerControl();
       this.attachZoomHandler();
-      this.attachDrawButtons();
     }
   }
 
-  attachLayerControl() {
-    const map = this.getMap();
-    if (!map) return;
-    const baseLayers = {
-      "Open Street Basemap": this.app.layerManager.openStreetMap,
-    };
-    const overLays = {
-      "City Boundary": this.app.layerManager.city,
-      "Country Boundary": this.app.layerManager.world,
-      "Empire Boundary": this.app.layerManager.empire,
-    };
-    const sanitizedOverlays = Object.fromEntries(
-      Object.entries(overLays).filter(([k, v]) => v)
-    );
-    this.layersControl = L.control
-      .layers(baseLayers, sanitizedOverlays)
-      .addTo(map);
-  }
+  //stop layer controler
+
+  // attachLayerControl() {
+  //   const map = this.getMap();
+  //   if (!map) return;
+  //   const baseLayers = {
+  //     "Open Street Basemap": this.app.layerManager.openStreetMap,
+  //   };
+  //   const overLays = {
+  //     "City Boundary": this.app.layerManager.city,
+  //     "Country Boundary": this.app.layerManager.world,
+  //     "Empire Boundary": this.app.layerManager.empire,
+  //   };
+  //   const sanitizedOverlays = Object.fromEntries(
+  //     Object.entries(overLays).filter(([k, v]) => v)
+  //   );
+  //   this.layersControl = L.control
+  //     .layers(baseLayers, sanitizedOverlays)
+  //     .addTo(map);
+  // }
 
   //暂时没有Zoom改变的问题
   attachZoomHandler() {
@@ -1429,29 +1430,30 @@ class EventManager {
     // });
   }
 
-  attachDrawButtons() {
-    const map = this.getMap();
-    if (!map || !map.pm) return;
-    map.pm.addControls({
-      position: "topright",
-      drawMarker: true,
-      drawCircleMarker: false,
-      drawPolyline: false,
-      drawRectangle: false,
-      drawCircle: false,
-      drawPolygon: false,
-      drawText: false,
-      editMode: true,
-      dragMode: true,
-      cutPolygon: false,
-      removalMode: true,
-      oneBlock: false,
-      rotateMode: false,
-      drawControls: true,
-      editControls: true,
-      editMode: false,
-    });
-  }
+  // suspend draw button function
+  // attachDrawButtons() {
+  //   const map = this.getMap();
+  //   if (!map || !map.pm) return;
+  //   map.pm.addControls({
+  //     position: "topright",
+  //     drawMarker: true,
+  //     drawCircleMarker: false,
+  //     drawPolyline: false,
+  //     drawRectangle: false,
+  //     drawCircle: false,
+  //     drawPolygon: false,
+  //     drawText: false,
+  //     editMode: true,
+  //     dragMode: true,
+  //     cutPolygon: false,
+  //     removalMode: true,
+  //     oneBlock: false,
+  //     rotateMode: false,
+  //     drawControls: true,
+  //     editControls: true,
+  //     editMode: false,
+  //   });
+  // }
 }
 
 class TimelineManager {
