@@ -387,7 +387,6 @@
 /* 可滚动内容区 */
 
 #scroll-area {
-  padding-right: 40px;
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
@@ -416,6 +415,7 @@
 }
 
 #wgs_sidebar {
+  padding-right: 40px;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -433,7 +433,7 @@
   background: transparent;
   padding: 0;
   color: white;
-  width: 94%;
+  width: 100%;
   margin-bottom: 0px;
 }
 
@@ -490,8 +490,6 @@
 /* filter 卡 */
 #filter-card {
   display: grid;
-  padding-right: 40px;
-  /* overflow-x: hidden; */
   grid-template-columns: 1fr 1fr auto;
   grid-template-rows: auto auto;
   gap: 0.8rem 1rem;
@@ -682,14 +680,12 @@
 
 /* footer and back button  */
 #sidebar-footer {
-  padding-right: 40px;
   flex-shrink: 0; /* ★ 防止被挤压 */
   padding-bottom: 10px;
   padding-top: 6px;
 }
+
 .menu-divider {
-  padding-right: 40px;
-  width: 100%;
   height: 0.7px;
   background-color: white;
   margin-top: 10px;
