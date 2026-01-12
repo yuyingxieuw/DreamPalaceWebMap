@@ -4,7 +4,7 @@ class WebMapApp {
     this.dataManager = new DataManager(this);
     this.layerManager = new LayerManager(this);
     this.uiManager = new UIManager(this);
-    // this.searchManager = new SearchManager(this);
+    //this.searchManager = new SearchManager(this);
     this.eventManager = new EventManager(this);
     this.timelineManager = new TimelineManager(this);
     this.wgsStateManager = new WgsStateManager(this);
