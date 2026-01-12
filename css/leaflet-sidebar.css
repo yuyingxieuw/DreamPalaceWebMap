@@ -242,20 +242,15 @@
   }
 }
 
-.sidebar {
-  box-shadow: 0;
-}
-
 .sidebar.leaflet-touch {
   box-shadow: none;
-  border-right: 0.5px solid #ffffff;
 }
 @media (min-width: 768px) {
   .sidebar {
     border-radius: 4px;
   }
   .sidebar.leaflet-touch {
-    border: 2px solid black;
+    box-shadow: none;
   }
 }
 
