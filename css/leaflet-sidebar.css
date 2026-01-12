@@ -23,7 +23,7 @@
   --background: black;
   --font-family: "Basis", sans-serif;
   --font-weight: 300;
-  --transition: all 0.3s ease-in-out;
+  /* --transition: all 0.3s ease-in-out; */
 }
 .sidebar {
   position: absolute;
@@ -32,6 +32,7 @@
   width: 100%;
   z-index: 1000;
   background-color: black;
+  border-right: 1px solid white;
   /* transition: width 1.5s ease !important; */
   overflow: hidden;
 }
@@ -247,7 +248,7 @@
 
 .sidebar.leaflet-touch {
   box-shadow: none;
-  border-right: 2px solid #141204;
+  border-right: 0.5px solid #ffffff;
 }
 @media (min-width: 768px) {
   .sidebar {

@@ -1068,7 +1068,7 @@ class UIManager {
       const prop = f.properties;
       const country = prop.Country;
       const city = prop.City;
-      if (!country || !city) continue;
+      if (!country) continue;
 
       if (!countryCityMap[country]) {
         countryCityMap[country] = new Set();
@@ -1083,7 +1083,7 @@ class UIManager {
     // all countries
     const countries = Object.keys(countryCityMap).sort();
 
-    // other filter selector
+    // condition & typology filter selector
     const unique = (field) => {
       const values = features.flatMap((f) => {
         const v = f.properties[field];
@@ -1107,7 +1107,9 @@ class UIManager {
       .addEventListener("change", (e) => {
         const selectedCountry = e.target.value;
         const cities = selectedCountry
-          ? [...countryCityMap[selectedCountry]].sort()
+          ? [...countryCityMap[selectedCountry]]
+              .filter((c) => c && c !== "undefined" && c !== "null")
+              .sort()
           : [];
         document.getElementById("filter-city").classList.remove("inactive");
         fill("filter-city", cities);

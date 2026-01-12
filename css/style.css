@@ -14,7 +14,7 @@ body {
   background-color: beige;
 }
 
-#header {
+/* #header {
   position: fixed;
   top: 0;
   left: 0;
@@ -23,12 +23,12 @@ body {
   display: flex;
   background: black;
   justify-content: center; /* 水平居中 */
-  align-items: center;
+/* align-items: center;
   backdrop-filter: blur(6px);
   z-index: 2000;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
   border-bottom: 0.5px solid white;
-}
+} */
 
 #cursor-pointer {
   font-family: "Basis Grotesque Mono Pro", "Space Grotesk", "Inter", sans-serif;
