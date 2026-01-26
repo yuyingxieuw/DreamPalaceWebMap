@@ -41,7 +41,13 @@ body {
   pointer-events: auto;
   display: block;
   background: #000 !important;
-  transition: left 1.5s ease, right 0.3s ease;
+  transition:
+    left 1.5s ease,
+    right 0.3s ease;
+}
+/* for spil country boundary styling  */
+.glow-line {
+  filter: drop-shadow(0 0 9px rgba(255, 255, 255, 0.7));
 }
 
 .map-shifted-to-left {
@@ -97,7 +103,7 @@ body {
 }
 
 .fade-point {
-  animation: fadeInOut 7s ease-in-out infinite;
+  animation: fadeInOut 5s ease-in-out infinite;
 }
 
 @keyframes fadeInOut {

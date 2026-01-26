@@ -1,6 +1,7 @@
 @font-face {
   font-family: "Basis";
-  src: url("/fonts/Basis-Regular.woff2") format("woff2"),
+  src:
+    url("/fonts/Basis-Regular.woff2") format("woff2"),
     url("/fonts/Basis-Regular.woff") format("woff");
   /* url("/fonts/Basis-Regular.otf") format("opentype"); */
   font-weight: 400;
@@ -10,7 +11,8 @@
 
 @font-face {
   font-family: "Basis";
-  src: url("/fonts/Basis-Light.woff2") format("woff2"),
+  src:
+    url("/fonts/Basis-Light.woff2") format("woff2"),
     url("/fonts/Basis-Light.woff") format("woff");
   /* url("/fonts/Basis-Regular.otf") format("opentype"); */
   font-weight: 400;
@@ -369,18 +371,24 @@
   display: block;
 }
 #explore_container {
+  overflow: hidden;
   display: block;
   margin-top: 15px;
 }
+
 #about_map_text {
   width: 550px;
   color: #f0ede7;
   font-family: "Basis", sans-serif;
-  line-height: 1.6;
+  line-height: 1.5;
   letter-spacing: 0.2px;
-  font-size: 13px;
+  font-size: 14px;
   padding-top: 6px;
   padding-right: 30px;
+}
+
+.about_map_text p {
+  margin-bottom: 12px; /* 段落之间的距离 */
 }
 
 /* WGS Sidebar Part */

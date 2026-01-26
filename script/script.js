@@ -134,10 +134,17 @@ class MapManager {
       zoom: this.spilhausStart.zoom,
       maxBounds: this.mapBounds,
       minZoom: 2,
-      maxZoom: 3,
+      maxZoom: 2,
       scrollWheelZoom: "center",
       touchZoom: "center",
       doubleClickZoom: "center",
+      zoomControl: false,
+      scrollWheelZoom: false,
+      doubleClickZoom: false,
+      touchZoom: false,
+      boxZoom: false,
+      keyboard: false,
+
       zoomSnap: 1,
       zoomDelta: 1,
       inertia: false,
@@ -162,15 +169,9 @@ class MapManager {
       tms: true,
       tileSize: 256,
       minZoom: 2,
-      maxZoom: 3,
-      minNativeZoom: 3,
-      maxNativeZoom: 3,
-      scrollWheelZoom: "center",
-      touchZoom: "center",
-      doubleClickZoom: "center",
-      zoomSnap: 1,
-      zoomDelta: 1,
-      inertia: false,
+      maxZoom: 2,
+      minNativeZoom: 2,
+      maxNativeZoom: 2,
       noWrap: true,
       bounds: this.mapBounds,
       keepBuffer: 2,
@@ -205,19 +206,20 @@ class MapManager {
         updateWhenZooming: false,
         detectRetina: true,
         attribution: "&copy; CARTO &copy; OpenStreetMap contributors",
-      }
+      },
     ).addTo(this.mapWgs);
   }
 
   loadSpilhausCountries() {
-    const polygonYOffset = 1990000;
+    const polygonYOffset = 2000000;
+    const polygonXOffset = 0;
     const style = {
       color: "#e4e5e7ff",
       weight: 1,
       fillColor: "#ffffffff",
       fillOpacity: 0,
+      className: "glow-line",
     };
-
     this.spilhausCountryFiles.forEach((key) => {
       fetch(`assets/${key}.geojson`, {
         cache: "no-cache",
@@ -229,7 +231,8 @@ class MapManager {
         .then((geojson) => {
           if (geojson.crs) delete geojson.crs;
           const polyLayer = new L.geoJSON(geojson, {
-            coordsToLatLng: (c) => L.latLng(c[1] - polygonYOffset, c[0]),
+            coordsToLatLng: (c) =>
+              L.latLng(c[1] - polygonYOffset, c[0] + polygonXOffset),
             style,
             interactive: true,
             onEachFeature: (_, layer) => {
@@ -254,7 +257,7 @@ class MapManager {
           this.spilhausCountryLayers.push(polyLayer);
         })
         .catch((err) =>
-          console.error(`[Spilhaus] GeoJSON load failed: ${key}`, err)
+          console.error(`[Spilhaus] GeoJSON load failed: ${key}`, err),
         );
     });
   }
@@ -330,7 +333,7 @@ class MapManager {
       if (opts.center || typeof opts.zoom === "number") {
         this.setView(
           opts.center ?? this.spilhausStart.center,
-          opts.zoom ?? this.spilhausStart.zoom
+          opts.zoom ?? this.spilhausStart.zoom,
         );
       }
       this._emitProjectionChange();
@@ -364,7 +367,7 @@ class MapManager {
     const center = this.countryCentroid[countryKey];
     if (!center) {
       console.warn(
-        `[WGS] Missing centroid for ${countryKey}, fallback to [0,0].`
+        `[WGS] Missing centroid for ${countryKey}, fallback to [0,0].`,
       );
     }
     this.activeCountry = countryKey;
@@ -391,7 +394,7 @@ class MapManager {
     window.dispatchEvent(
       new CustomEvent("projectionchange", {
         detail: { projection: this.active, country: this.activeCountry },
-      })
+      }),
     );
   }
 
@@ -427,7 +430,7 @@ class DataManager {
     //fetch geojson data for wgs palace
     try {
       const response_wgs = await fetch(
-        "https://dreampalacemapapp.onrender.com/api/palaces_wgs.geojson"
+        "https://dreampalacemapapp.onrender.com/api/palaces_wgs.geojson",
       );
       this.geojson_wgs = await response_wgs.json();
     } catch (err) {
@@ -436,7 +439,7 @@ class DataManager {
     // fetch geojson data for spil (note: this data only have name and latlng)
     try {
       const response_spil = await fetch(
-        "https://dreampalacemapapp.onrender.com/api/palaces_spil.geojson"
+        "https://dreampalacemapapp.onrender.com/api/palaces_spil.geojson",
       );
       this.geojson_spil = await response_spil.json();
     } catch (err) {
@@ -518,7 +521,7 @@ class LayerManager {
     window.dispatchEvent(
       new CustomEvent("projectionready", {
         detail: { projection: "wgs" },
-      })
+      }),
     );
     this.initStyleRadioWatcher();
     // this.loadCityPolygon();
@@ -591,7 +594,7 @@ class LayerManager {
     // add new layer
     this.palace = L.geoJSON(
       { type: "FeatureCollection", features: filteredFeatures },
-      { pointToLayer: this.getPointStyleFunction() }
+      { pointToLayer: this.getPointStyleFunction() },
     ).addTo(map);
   }
 
@@ -628,7 +631,7 @@ class LayerManager {
           // console.log("选项变化，重新加载图层");
           this.renderPalaceLayer(); // 每次根据 getPointStyleFunction 重新加载
         },
-        { signal: sig }
+        { signal: sig },
       );
     });
   }
@@ -1170,7 +1173,7 @@ class UIManager {
     }
     const safeId = String(data.airtable_id || data.Name || "item").replace(
       /\W+/g,
-      "_"
+      "_",
     );
     const hasImages = imageUrls.length > 0;
     const first = hasImages ? imageUrls[0] : "";
@@ -1182,7 +1185,7 @@ class UIManager {
               (_, i) =>
                 `<button class="dot${
                   i === 0 ? " active" : ""
-                }" data-idx="${i}" aria-label="image ${i + 1}"></button>`
+                }" data-idx="${i}" aria-label="image ${i + 1}"></button>`,
             )
             .join("")}
         </div>`
@@ -1191,7 +1194,7 @@ class UIManager {
     const imageHtml = hasImages
       ? `
         <div class="carousel" data-carousel="${safeId}" data-images='${JSON.stringify(
-          imageUrls
+          imageUrls,
         )}'>
         <button class="carousel-arrow left" data-dir="prev" data-carousel="${safeId}">&#10094;</button>
         <div class="img-wrapper">
@@ -1299,7 +1302,7 @@ class UIManager {
       e.preventDefault();
       this.app.mapManager.activate(
         "spilhaus",
-        this.app.mapManager.spilhausStart
+        this.app.mapManager.spilhausStart,
       );
     });
   }
