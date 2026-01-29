@@ -53,30 +53,51 @@ class MapManager {
     this.wgsDefaultZoom = 4;
     // country centroid
     this.countryCentroid = {
+      // [lat, lon-20]
+      Benin: [9.167515, -18.149943],
       Brazil: [-7.535994, -87.340427],
       Burkina_Faso: [11.726473, -25.308822],
       Cameroon: [5.810411, 0.63166],
+      Gabon: [-0.65928, -9.265509],
       Ghana: [7.678434, -22.749734],
+      Ivory_Coast: [7.448314, -25.57044],
       Mali: [18.191814, -15.811439],
+      Mauritania: [19.845131, -30.86385],
       Mozambique: [-18.877222, 0.659506],
+      Niger: [16.988293, -11.573399],
       Nigeria: [9.039145, 2.763425],
+      Democratic_Republic_of_the_Congo: [-1.328403, -5.385447],
       Senegal: [14.781868, -17.375992],
       South_Africa: [-28.898819, -7.063372],
-      United_Kingdom: [54.091472, -3.224016],
+      Sudan: [16.210732, 8.558508],
+      Chad: [15.828363, -2.61267],
+      Togo: [8.481892, 1.057643],
+      United_Kingdom: [54.091472, -23.224016],
       US: [41.59938, -125.308336],
+      Zimbabwe: [-19.214896, 9.839996],
     };
     this.spilhausCountryFiles = [
+      "Benin",
       "Brazil",
       "Burkina_Faso",
       "Cameroon",
+      "Gabon",
       "Ghana",
+      "Ivory_Coast",
       "Mali",
+      "Mauritania",
       "Mozambique",
+      "Niger",
       "Nigeria",
+      "Democratic_Republic_of_the_Congo",
       "Senegal",
       "South_Africa",
+      "Sudan",
+      "Chad",
+      "Togo",
       "United_Kingdom",
       "US",
+      "Zimbabwe",
     ];
   }
 
@@ -215,7 +236,7 @@ class MapManager {
     const polygonXOffset = 0;
     const style = {
       color: "#e4e5e7ff",
-      weight: 1,
+      weight: 0.7,
       fillColor: "#ffffffff",
       fillOpacity: 0,
       className: "glow-line",
@@ -235,21 +256,30 @@ class MapManager {
               L.latLng(c[1] - polygonYOffset, c[0] + polygonXOffset),
             style,
             interactive: true,
-            onEachFeature: (_, layer) => {
+            onEachFeature: (feature, layer) => {
+              const label = feature.properties.NAME;
               layer.on({
                 mouseover: (e) => {
                   e.target.setStyle({ weight: 2, fillOpacity: 0 });
                   e.target.bringToFront();
-                  //console.log("Mouseover::", e);
+                  e.target
+                    .bindTooltip(label, {
+                      permanent: false,
+                      direction: "top",
+                      className: "country-label",
+                      offset: [0, -4],
+                    })
+                    .openTooltip();
                 },
                 mouseout: (e) => {
                   polyLayer.resetStyle(e.target);
+                  e.target.unbindTooltip();
                 },
                 click: () => {
                   this._switchToWgsUsingCentroid(key);
                   this.spilhausToDefault(); //取消所有的平移
                   this.app.uiManager.handleAreaInfoShift(key);
-                  this.eventManager.rebindForProjection("wgs"); // add zoomhandler
+                  this.app.eventManager.rebindForProjection("wgs"); // add zoomhandler
                 },
               });
             },
@@ -356,7 +386,6 @@ class MapManager {
         this.setView(opts.center, opts.zoom ?? this.wgsDefaultZoom);
       }
       this._emitProjectionChange();
-      this.app.wgsStateManager.getZoomLevel();
       return;
     }
 
@@ -527,6 +556,7 @@ class LayerManager {
     // this.loadCityPolygon();
     // this.loadEmpirePolygon();
     this.loadCountryPolygon();
+    this.app.wgsStateManager.handleZoomChange();
   }
 
   getMap() {
@@ -646,16 +676,39 @@ class LayerManager {
       : this.pointStyle2.bind(this);
   }
 
+  getRadiusByZoom(zoom) {
+    if (zoom <= 2) return 1.7;
+    if (zoom === 3) return 3;
+    if (zoom === 4) return 4.5;
+    if (zoom === 5) return 6;
+    return 8;
+  }
+
+  updatePalaceMarkerSize() {
+    const zoom = this.app.wgsStateManager.getZoomLevel();
+    const radius = this.getRadiusByZoom(zoom);
+    this.app.mapManager.mapWgs.eachLayer((layer) => {
+      if (
+        layer instanceof L.CircleMarker &&
+        layer.options.pane === "palacePane"
+      ) {
+        layer.setRadius(radius);
+      }
+    });
+  }
+
   pointStyle1(feature, latlng) {
     const attr = feature.properties;
     const status = attr["Condition"];
+    const zoom = this.app.mapManager.mapWgs.getZoom();
+    const radius = this.getRadiusByZoom(zoom);
     const marker = L.circleMarker(latlng, {
       className: "palace-marker",
-      radius: 2.1,
+      radius: radius,
       fillOpacity: 0.9,
       opacity: 0.6,
       weight: 0.7,
-      fillColor: status === "Still Standing" ? "#398ff9ff" : "#4f9cfb",
+      fillColor: status === "Still Standing" ? "#4f9cfb" : "#4f9cfb",
       color: status === "Still Standing" ? "#f4f2f2ff" : "#ffffffff",
       pane: "palacePane",
     });
@@ -802,42 +855,27 @@ class LayerManager {
     const map = this.getMap();
     if (!map) return;
     const country_array = [
+      "Benin",
       "Brazil",
       "Burkina Faso",
       "Cameroon",
+      "Chad",
+      "Democratic Republic of the Congo",
+      "Gabon",
       "Ghana",
+      "Ivory Coast",
       "Mali",
+      "Mauritania",
       "Mozambique",
+      "Niger",
       "Nigeria",
       "Senegal",
       "South Africa",
+      "Sudan",
+      "Togo",
       "United Kingdom",
       "United States of America",
     ];
-    const centroid = {
-      // prettier-ignore
-      "Brazil": [-7.535994, -72.340427],
-      // prettier-ignore
-      "Burkina Faso": [11.726473, -5.308822],
-      // prettier-ignore
-      "Cameroon": [5.810411, 9.631660],
-      // prettier-ignore
-      "Ghana": [7.678434, -2.749734],
-      // prettier-ignore
-      "Mali": [18.191814, -5.811439],
-      // prettier-ignore
-      "Mozambique": [-18.877222, 32.659506],
-      // prettier-ignore
-      "Nigeria": [9.039145, 2.763425],
-      // prettier-ignore
-      "Senegal": [14.781868, -17.375992],
-      // prettier-ignore
-      "South Africa": [-28.898819, 17.063372],
-      // prettier-ignore
-      "United Kingdom": [54.091472, -13.224016],
-      // prettier-ignore
-      "United States of America": [41.599380, -105.308336],
-    };
     try {
       const response = await fetch("assets/selectedcountryWGS.geojson");
       const data = await response.json();
@@ -845,8 +883,9 @@ class LayerManager {
         pane: "countryPane",
         style: (feature) => {
           return {
-            color: "white",
-            weight: 0,
+            color: "#e0e0e0",
+            weight: 0.6,
+            opacity: 0.3,
             fillColor: "white",
             fillOpacity: 0,
           };
@@ -857,8 +896,8 @@ class LayerManager {
             layer.on({
               mouseover: (e) => {
                 e.target.setStyle({
-                  color: "#e4e5e7ff",
-                  weight: 0.8,
+                  color: "#fdfdfdff",
+                  weight: 2.5,
                   fillColor: "#062244ff",
                   fillOpacity: 0,
                 });
@@ -983,7 +1022,6 @@ class UIManager {
     <h3>${info.title}</h3>
     <p>${info.description}</p>
     <div class="image-container">
-    ${imageHTML}
     </div>
     `;
   }
@@ -1220,6 +1258,7 @@ class UIManager {
     <div class="image-container">
       ${imageHtml}
     </div>
+    <p > ${data["Website description"] || ""} </p>
     <p > ${data.Notes || ""} </p>
     <p > ${data["Additional resources"] || ""} </p>
     `;
@@ -1540,8 +1579,15 @@ class WgsStateManager {
   getZoomLevel() {
     this.current_zoom = this.app.mapManager.mapWgs.getZoom();
     console.log(this.current_zoom);
+    return this.current_zoom;
   }
 
+  handleZoomChange() {
+    this.app.mapManager.mapWgs.on("zoomend", () => {
+      this.getZoomLevel();
+      this.app.layerManager.updatePalaceMarkerSize();
+    });
+  }
   getCenterPoint() {
     this.current_center = this.app.mapManager.mapWgs.getCenter();
     console.log(this.current_center);

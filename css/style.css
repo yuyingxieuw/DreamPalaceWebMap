@@ -1,3 +1,25 @@
+@font-face {
+  font-family: "Basis";
+  src:
+    url("/fonts/Basis-Regular.woff2") format("woff2"),
+    url("/fonts/Basis-Regular.woff") format("woff");
+  /* url("/fonts/Basis-Regular.otf") format("opentype"); */
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Basis";
+  src:
+    url("/fonts/Basis-Light.woff2") format("woff2"),
+    url("/fonts/Basis-Light.woff") format("woff");
+  /* url("/fonts/Basis-Regular.otf") format("opentype"); */
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -116,4 +138,19 @@ body {
   100% {
     opacity: 0.8;
   }
+}
+
+.country-label {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: #fffbfb !important ; /* 文字颜色自己调 */
+  font-family: "Basis", sans-serif;
+  font-size: 12px;
+  padding: 0;
+}
+
+/* 去掉 tooltip 小三角 */
+.country-label::before {
+  display: none;
 }
