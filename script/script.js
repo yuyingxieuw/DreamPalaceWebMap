@@ -260,6 +260,10 @@ class MapManager {
               const label = feature.properties.NAME;
               layer.on({
                 mouseover: (e) => {
+                  if (e.target.getTooltip()) {
+                    e.target.closeTooltip();
+                    e.target.unbindTooltip();
+                  }
                   e.target.setStyle({ weight: 2, fillOpacity: 0 });
                   e.target.bringToFront();
                   e.target
@@ -273,7 +277,10 @@ class MapManager {
                 },
                 mouseout: (e) => {
                   polyLayer.resetStyle(e.target);
-                  e.target.unbindTooltip();
+                  if (e.target.getTooltip()) {
+                    e.target.closeTooltip();
+                    e.target.unbindTooltip();
+                  }
                 },
                 click: () => {
                   this._switchToWgsUsingCentroid(key);
