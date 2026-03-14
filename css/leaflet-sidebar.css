@@ -546,6 +546,111 @@
   pointer-events: none;
 }
 
+/* select sesstion for condition and typology */
+/* 自定义 dropdown 容器 */
+.custom-dropdown {
+  position: relative;
+  width: 200px;
+}
+
+/* trigger 按钮复用 .filter-select 样式，额外重置 button 默认样式 */
+.dropdown-trigger {
+  width: 100%;
+  cursor: pointer;
+  background: rgba(253, 249, 237, 0.1);
+  border: 0.5px solid #fdf9ed;
+  border-radius: 4px;
+  color: #fdf9ed;
+  font-size: 12px;
+  font-family: "Basis", sans-serif;
+  text-align: center;
+  height: 30px;
+  padding: 0 8px;
+  text-transform: capitalize;
+}
+
+.dropdown-trigger.has-selection:hover {
+  background: rgba(255, 255, 255, 1);
+  color: #000;
+}
+
+/* 有选中项时 trigger 显示激活状态 */
+.dropdown-trigger.has-selection {
+  background: #000000;
+  color: #fdf9ed;
+  box-shadow: 0 0 0 0.8px #4f9cfb;
+}
+
+/* 下拉菜单，默认隐藏 */
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  min-width: 100%;
+  background: #d9d9d9;
+  border: 1px solid #a8a8a8;
+  border-radius: 2px;
+  padding: 2px 0;
+  z-index: 100;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+}
+
+.custom-dropdown.open .dropdown-menu {
+  display: block;
+}
+
+.dropdown-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 4px 10px 4px 24px;
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 1.2;
+  font-family: "Basis", sans-serif;
+  color: #2f2f2f;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.dropdown-item:hover {
+  background: #3875d7;
+  color: #ffffff;
+}
+
+/* 隐藏原生 checkbox */
+.dropdown-item input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 默认不显示任何符号 */
+.dropdown-item::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1;
+  color: #2f2f2f;
+}
+
+/* 选中时只显示 check mark */
+.dropdown-item:has(input[type="checkbox"]:checked)::before {
+  content: "✓";
+}
+
+/* hover 时 check mark 也变白 */
+.dropdown-item:hover::before {
+  color: #ffffff;
+}
+
 /* Clean Filters Buttons */
 .btn-clean,
 .btn-ocean {

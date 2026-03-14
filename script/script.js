@@ -155,7 +155,7 @@ class MapManager {
       zoom: this.spilhausStart.zoom,
       maxBounds: this.mapBounds,
       minZoom: 2,
-      maxZoom: 2,
+      maxZoom: 3,
       scrollWheelZoom: "center",
       touchZoom: "center",
       doubleClickZoom: "center",
@@ -497,6 +497,14 @@ class DataManager {
 
     return this.geojson_wgs.features.filter((f) => {
       const p = f.properties;
+
+      const conditionValues = Array.isArray(p.Condition)
+        ? p.Condition
+        : [p.Condition];
+      const typologyValues = Array.isArray(p.Typology)
+        ? p.Typology
+        : [p.Typology];
+
       const timeMatch_Creation =
         filters.yearChoose === "all" || p.Creation <= filters.yearChoose;
       const timeMatch_Closure =
@@ -505,9 +513,11 @@ class DataManager {
         filters.country === "all" || p.Country === filters.country;
       const cityMatch = filters.city === "all" || p.City === filters.city;
       const conditionMatch =
-        filters.condition === "all" || p.Condition === filters.condition;
+        filters.condition.length > 0 &&
+        conditionValues.some((t) => filters.condition.includes(t));
       const typologyMatch =
-        filters.typology === "all" || p.Typology === filters.typology;
+        filters.typology.length > 0 &&
+        typologyValues.some((t) => filters.typology.includes(t));
       return (
         timeMatch_Creation &&
         timeMatch_Closure &&
@@ -860,29 +870,16 @@ class LayerManager {
 
   async loadCountryPolygon() {
     const map = this.getMap();
+    const empire_color = {
+      FR: "#82d9ebff",
+      UK: "#db8feaff",
+      BE: "#f980aaff",
+      PO: "#7be6c1ff",
+      FRUK: "#e2dc63ff",
+      NA: "#fdfdfdff",
+    };
+
     if (!map) return;
-    const country_array = [
-      "Benin",
-      "Brazil",
-      "Burkina Faso",
-      "Cameroon",
-      "Chad",
-      "Democratic Republic of the Congo",
-      "Gabon",
-      "Ghana",
-      "Ivory Coast",
-      "Mali",
-      "Mauritania",
-      "Mozambique",
-      "Niger",
-      "Nigeria",
-      "Senegal",
-      "South Africa",
-      "Sudan",
-      "Togo",
-      "United Kingdom",
-      "United States of America",
-    ];
     try {
       const response = await fetch("assets/selectedcountryWGS.geojson");
       const data = await response.json();
@@ -892,44 +889,34 @@ class LayerManager {
           return {
             color: "#e0e0e0",
             weight: 0.6,
-            opacity: 0.3,
+            opacity: 0.6,
             fillColor: "white",
             fillOpacity: 0,
           };
         },
         onEachFeature: (feature, layer) => {
-          const name = feature.properties.NAME;
-          if (country_array.includes(name)) {
-            layer.on({
-              mouseover: (e) => {
-                e.target.setStyle({
-                  color: "#fdfdfdff",
-                  weight: 2.5,
-                  fillColor: "#062244ff",
-                  fillOpacity: 0,
-                });
-                if (e.target._path) {
-                  e.target._path.style.cursor = "default"; // 强制改 cursor
-                }
-                e.target.bringToFront();
-              },
-              mouseout: (e) => {
-                const to = e.originalEvent.relatedTarget;
-                if (to && to.closest(".palace-marker")) {
-                  return;
-                }
-                this.country.resetStyle(e.target);
-              },
-            });
-          } else {
-            layer.on({
-              mouseover: (e) => {
-                if (e.target._path) {
-                  e.target._path.style.cursor = "default"; // 强制改 cursor
-                }
-              },
-            });
-          }
+          const empire = feature.properties.Empire;
+          layer.on({
+            mouseover: (e) => {
+              e.target.setStyle({
+                color: empire_color[empire],
+                weight: 3,
+                fillColor: "#062244ff",
+                fillOpacity: 0,
+              });
+              if (e.target._path) {
+                e.target._path.style.cursor = "default"; // 强制改 cursor
+              }
+              e.target.bringToFront();
+            },
+            mouseout: (e) => {
+              const to = e.originalEvent.relatedTarget;
+              if (to && to.closest(".palace-marker")) {
+                return;
+              }
+              this.country.resetStyle(e.target);
+            },
+          });
         },
       }).addTo(map);
     } catch (err) {
@@ -1079,8 +1066,8 @@ class UIManager {
     const ids = [
       "filter-country",
       "filter-city",
-      "filter-condition",
-      "filter-typology",
+      "dropdown-condition",
+      "dropdown-typology",
     ];
 
     ids.forEach((id) => {
@@ -1102,15 +1089,26 @@ class UIManager {
   }
 
   resetFilter() {
-    const ids = ["filter-country", "filter-condition", "filter-typology"];
-
-    ids.forEach((id) => {
-      const sel = document.getElementById(id);
-      if (sel) sel.selectedIndex = 0;
-    });
-
+    // reset country and city tab
+    const sel = document.getElementById("filter-country");
+    if (sel) sel.selectedIndex = 0;
     document.getElementById("filter-city").classList.add("inactive");
     document.getElementById("filter-city").selectedIndex = 0;
+
+    // rest condition and topology tabs
+    const ids = ["dropdown-condition", "dropdown-typology"];
+    ids.forEach((id) => {
+      const container = document.getElementById(id);
+      if (!container) return;
+
+      container.querySelectorAll(`input[type="checkbox"]`).forEach((cb) => {
+        cb.checked = true;
+      });
+      const trigger = container.querySelector(".dropdown-trigger");
+      if (trigger) {
+        trigger.classList.add("has-selection");
+      }
+    });
   }
 
   populateDropdowns(geojson) {
@@ -1150,46 +1148,104 @@ class UIManager {
     const typologies = unique("Typology");
 
     // drop down menu
-    fill("filter-country", countries);
-    fill("filter-city", []);
-    fill("filter-condition", conditions);
-    fill("filter-typology", typologies);
+    fill("filter-country", countries, "country");
+    fill("filter-city", [], "city");
+    this.fillCheckboxes("dropdown-condition", conditions);
+    this.fillCheckboxes("dropdown-typology", typologies);
 
     document
       .getElementById("filter-country")
       .addEventListener("change", (e) => {
         const selectedCountry = e.target.value;
-        const cities = selectedCountry
-          ? [...countryCityMap[selectedCountry]]
-              .filter((c) => c && c !== "undefined" && c !== "null")
-              .sort()
-          : [];
+        const cities =
+          selectedCountry === "all"
+            ? []
+            : [...countryCityMap[selectedCountry]]
+                .filter((c) => c && c !== "undefined" && c !== "null")
+                .sort();
         document.getElementById("filter-city").classList.remove("inactive");
-        fill("filter-city", cities);
+        fill("filter-city", cities, "city");
       });
 
-    function fill(id, items) {
+    function fill(id, items, label) {
       const sel = document.getElementById(id);
       if (!sel) return;
-
       sel.innerHTML =
-        `
-      <option value="" disabled selected>${id.replace("filter-", "")}</option>
-    ` + items.map((i) => `<option value="${i}">${i}</option>`).join("");
+        `<option value="all">${label}</option>` +
+        items.map((i) => `<option value="${i}">${i}</option>`).join("");
     }
   }
 
   getUIFilters() {
-    return {
+    const getCheckedValues = (name) => {
+      const checkboxes = document.querySelectorAll(
+        `input[name="${name}"]:checked`,
+      );
+      return Array.from(checkboxes).map((cb) => cb.value);
+    };
+
+    const result = {
       country: document.getElementById("filter-country")?.value || "all",
       city: document.getElementById("filter-city")?.value || "all",
-      condition: document.getElementById("filter-condition")?.value || "all",
-      typology: document.getElementById("filter-typology")?.value || "all",
+      condition: getCheckedValues("dropdown-condition"),
+      typology: getCheckedValues("dropdown-typology"),
     };
+    return result;
   }
 
-  // generate palace info
+  fillCheckboxes(id, items) {
+    const container = document.getElementById(id);
+    if (!container) return;
+
+    const trigger = container.querySelector(".dropdown-trigger");
+    const menu = container.querySelector(".dropdown-menu");
+
+    if (!trigger || !menu) return;
+
+    // create HTML dropdown menu based on items
+    menu.innerHTML = items
+      .map(
+        (item) => `
+      <label class="dropdown-item">
+      <input type="checkbox" name="${id}" value = "${item}" checked>
+      ${item}
+      </label>
+      `,
+      )
+      .join("");
+
+    trigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      document.querySelectorAll(".custom-dropdown").forEach((d) => {
+        if (d !== container) d.classList.remove("open");
+      });
+      container.classList.toggle("open");
+    });
+
+    menu.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
+
+    container.querySelectorAll('input[type="checkbox"]').forEach((cb) => {
+      cb.addEventListener("change", () => {
+        const anyChecked = [
+          ...container.querySelectorAll('input[type="checkbox"]'),
+        ].some((i) => i.checked);
+        trigger.classList.toggle("has-selection", anyChecked);
+        this.getUIFilters();
+      });
+    });
+
+    // click outside claspe
+    document.addEventListener("click", () => {
+      document
+        .querySelectorAll(".custom-dropdown")
+        .forEach((d) => d.classList.remove("open"));
+    });
+  }
+
   parseCommaLinks(value) {
+    // generate palace info
     // in case there are many pic links
     if (!value) return [];
     return String(value)
