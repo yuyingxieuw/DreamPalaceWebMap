@@ -538,7 +538,7 @@ class LayerManager {
     this.country_list = [];
     this.openStreetMap = null;
     this.city = null;
-    this.world = null;
+    this.country = null;
     this.empire = null;
     this.palace = null;
     this.originalData = null;
@@ -601,10 +601,12 @@ class LayerManager {
 
   clearAll() {
     const map = this.getMap();
-    [this.palace, this.city, this.world, this.openStreetMap].forEach((lyr) => {
-      if (lyr && map && map.hasLayer(lyr)) map.removeLayer(lyr);
-    });
-    this.palace = this.city = this.world = this.openStreetMap = null;
+    [this.palace, this.city, this.country, this.openStreetMap].forEach(
+      (lyr) => {
+        if (lyr && map && map.hasLayer(lyr)) map.removeLayer(lyr);
+      },
+    );
+    this.palace = this.city = this.country = this.openStreetMap = null;
     this.city_list = [];
     this.country_list = [];
   }
@@ -741,7 +743,7 @@ class LayerManager {
       this.app.uiManager.handleAboutPalaceClick();
       document.querySelector("#data_query_window").innerHTML = message;
       this.app.uiManager.enableCarouselInSidebar();
-      console.log("carsouldconnect init");
+
       // can add setview but it's too much move
       // const location = latlng;
       // this.app.mapManager.setView(location, 8);
@@ -881,7 +883,9 @@ class LayerManager {
 
     if (!map) return;
     try {
-      const response = await fetch("assets/selectedcountryWGS.geojson");
+      const response = await fetch(
+        "assets/selectedcountryWGS_withbounds.geojson",
+      );
       const data = await response.json();
       this.country = L.geoJSON(data, {
         pane: "countryPane",
@@ -1113,6 +1117,94 @@ class UIManager {
 
   populateDropdowns(geojson) {
     const features = geojson.features;
+    console.log(map);
+    const country_box = {
+      US: [
+        [18.906117083243295, -178.1895646025816],
+        [71.30634184200325, 173.3225204004568],
+      ],
+      "United Kingdom": [
+        [49.9096133314958, -8.62100175499142],
+        [60.84788642822225, 1.771169466553837],
+      ],
+      Brazil: [
+        [-33.74228050026018, -74.01847468748502],
+        [5.26722483595082, -29.31688391775911],
+      ],
+      Sudan: [
+        [8.681641793007996, 21.809448692164857],
+        [22.22696487947311, 38.60157311584468],
+      ],
+      Nigeria: [
+        [4.278143617801291, 2.671694504906813],
+        [13.880290710589037, 14.668282512267288],
+      ],
+      Benin: [
+        [6.213893935008467, 0.760707641992591],
+        [12.399244342089293, 3.837245715051969],
+      ],
+      Gabon: [
+        [-3.936856146340286, 8.695567254008084],
+        [2.322495002366744, 14.498990518979234],
+      ],
+      Ghana: [
+        [4.737128100805412, -3.261114054113827],
+        [11.162937309248472, 1.185394726987521],
+      ],
+      Senegal: [
+        [12.305606598319374, -17.536040818202192],
+        [16.691385387346358, -11.377776244483858],
+      ],
+      Togo: [
+        [6.100490607497333, -0.166109171000463],
+        [11.134980370216294, 1.782350708068246],
+      ],
+      "Burkina Faso": [
+        [9.39188248875952, -5.52257808504587],
+        [15.079721115192859, 2.390168903967196],
+      ],
+      Mozambique: [
+        [-26.860271483717945, 30.214420891608146],
+        [-10.472588808985629, 40.843516472590245],
+      ],
+      "South Africa": [
+        [-46.96575287742341, 16.471853065625904],
+        [-22.126451931142256, 37.97779379881331],
+      ],
+      Mali: [
+        [10.14005401392276, -12.264130411555783],
+        [24.995064546548846, 4.235637655100812],
+      ],
+      Niger: [
+        [11.695773031089407, 0.152941121016115],
+        [23.517351305173506, 15.9703218988023],
+      ],
+      "Democratic Republic of the Congo": [
+        [-13.459035, 12.2009869],
+        [5.3919312, 31.277423072584575],
+      ],
+      "Ivory Coast": [
+        [4.34406159100007, -8.618719847999955],
+        [10.726478170000064, -2.506328083999961],
+      ],
+      Mauritania: [
+        [14.719699999000056, -17.10160000099995],
+        [27.3632, -4.8333],
+      ],
+      Chad: [
+        [7.44107, 13.47348],
+        [23.4975, 24.0],
+      ],
+      Zimbabwe: [
+        [1811656.1871134627, -3046998.046108223],
+        [2347635.1455275584, -2418689.5873744874],
+      ],
+      Cameroon: [
+        [1.655927102853582, 8.501220260606601],
+        [13.079035233789057, 16.187787950453583],
+      ],
+    };
+
     // set country and it's own cities
     const countryCityMap = {};
     for (const f of features) {
@@ -1165,6 +1257,7 @@ class UIManager {
                 .sort();
         document.getElementById("filter-city").classList.remove("inactive");
         fill("filter-city", cities, "city");
+        // fly to bounds
       });
 
     function fill(id, items, label) {
