@@ -548,12 +548,6 @@ class LayerManager {
       const mode = e.detail.projection;
       this.loadForProjection(mode);
     });
-
-    window.addEventListener("yearFiltered", (e) => {
-      const filtered = e.detail.filtered;
-      console.log("LayerManager received filtered:", filtered.length);
-      this.loadPalacePoints(filtered);
-    });
   }
 
   loadForProjection(mode) {
@@ -562,7 +556,6 @@ class LayerManager {
       return;
     }
     this._initPanesWGS();
-    this.loadBasemapWGS();
     this.loadPalacePoints();
     window.dispatchEvent(
       new CustomEvent("projectionready", {
@@ -611,9 +604,103 @@ class LayerManager {
     this.country_list = [];
   }
 
-  loadBasemapWGS() {
+  flyViewBasemapWGS(selectcountry) {
     const map = this.getMap();
     if (!map) return;
+
+    const country_box_map = {
+      "United States": [
+        [18.906117083243295, -178.1895646025816],
+        [71.30634184200325, 173.3225204004568],
+      ],
+      "United Kingdom": [
+        [49.9096133314958, -8.62100175499142],
+        [60.84788642822225, 1.771169466553837],
+      ],
+      Brazil: [
+        [-33.74228050026018, -74.01847468748502],
+        [5.26722483595082, -29.31688391775911],
+      ],
+      Sudan: [
+        [8.681641793007996, 21.809448692164857],
+        [22.22696487947311, 38.60157311584468],
+      ],
+      Nigeria: [
+        [4.278143617801291, 2.671694504906813],
+        [13.880290710589037, 14.668282512267288],
+      ],
+      Benin: [
+        [6.213893935008467, 0.760707641992591],
+        [12.399244342089293, 3.837245715051969],
+      ],
+      Gabon: [
+        [-3.936856146340286, 8.695567254008084],
+        [2.322495002366744, 14.498990518979234],
+      ],
+      Ghana: [
+        [4.737128100805412, -3.261114054113827],
+        [11.162937309248472, 1.185394726987521],
+      ],
+      Senegal: [
+        [12.305606598319374, -17.536040818202192],
+        [16.691385387346358, -11.377776244483858],
+      ],
+      Togo: [
+        [6.100490607497333, -0.166109171000463],
+        [11.134980370216294, 1.782350708068246],
+      ],
+      "Burkina Faso": [
+        [9.39188248875952, -5.52257808504587],
+        [15.079721115192859, 2.390168903967196],
+      ],
+      Mozambique: [
+        [-26.860271483717945, 30.214420891608146],
+        [-10.472588808985629, 40.843516472590245],
+      ],
+      "South Africa": [
+        [-46.96575287742341, 16.471853065625904],
+        [-22.126451931142256, 37.97779379881331],
+      ],
+      Mali: [
+        [10.14005401392276, -12.264130411555783],
+        [24.995064546548846, 4.235637655100812],
+      ],
+      Niger: [
+        [11.695773031089407, 0.152941121016115],
+        [23.517351305173506, 15.9703218988023],
+      ],
+      "Republic of the Congo": [
+        [-13.459035, 12.2009869],
+        [5.3919312, 31.277423072584575],
+      ],
+      "Ivory Coast": [
+        [4.34406159100007, -8.618719847999955],
+        [10.726478170000064, -2.506328083999961],
+      ],
+      Mauritanie: [
+        [14.719699999000056, -17.10160000099995],
+        [27.3632, -4.8333],
+      ],
+      Tchad: [
+        [7.44107, 13.47348],
+        [23.4975, 24.0],
+      ],
+      Zimbabwe: [
+        [-22.397339766412152, 25.21936975617326],
+        [-15.614808045093373, 33.04276819154414],
+      ],
+      Cameroun: [
+        [1.655927102853582, 8.501220260606601],
+        [13.079035233789057, 16.187787950453583],
+      ],
+      Whole: [
+        [-64.49139289593924, -126.23897198947571],
+        [53.035050923925084, 52.83128783700525],
+      ],
+    };
+    const current_map = this.getMap();
+    const latlng_bond = country_box_map[selectcountry];
+    current_map.flyToBounds(latlng_bond);
   }
 
   // load original data (all year/ all data)
@@ -947,6 +1034,10 @@ class UIManager {
     return this.app.mapManager.getActiveMap();
   }
 
+  getProj() {
+    return this.app.mapManager.active;
+  }
+
   getCountry() {
     return this.app.mapManager.activeCountry;
   }
@@ -1088,6 +1179,8 @@ class UIManager {
       cleanBtn.addEventListener("click", () => {
         this.resetFilter();
         this.app.layerManager.loadPalacePoints();
+        // reset basemap view
+        this.monitorCountryChoice("Whole");
       });
     }
   }
@@ -1117,93 +1210,6 @@ class UIManager {
 
   populateDropdowns(geojson) {
     const features = geojson.features;
-    console.log(map);
-    const country_box = {
-      US: [
-        [18.906117083243295, -178.1895646025816],
-        [71.30634184200325, 173.3225204004568],
-      ],
-      "United Kingdom": [
-        [49.9096133314958, -8.62100175499142],
-        [60.84788642822225, 1.771169466553837],
-      ],
-      Brazil: [
-        [-33.74228050026018, -74.01847468748502],
-        [5.26722483595082, -29.31688391775911],
-      ],
-      Sudan: [
-        [8.681641793007996, 21.809448692164857],
-        [22.22696487947311, 38.60157311584468],
-      ],
-      Nigeria: [
-        [4.278143617801291, 2.671694504906813],
-        [13.880290710589037, 14.668282512267288],
-      ],
-      Benin: [
-        [6.213893935008467, 0.760707641992591],
-        [12.399244342089293, 3.837245715051969],
-      ],
-      Gabon: [
-        [-3.936856146340286, 8.695567254008084],
-        [2.322495002366744, 14.498990518979234],
-      ],
-      Ghana: [
-        [4.737128100805412, -3.261114054113827],
-        [11.162937309248472, 1.185394726987521],
-      ],
-      Senegal: [
-        [12.305606598319374, -17.536040818202192],
-        [16.691385387346358, -11.377776244483858],
-      ],
-      Togo: [
-        [6.100490607497333, -0.166109171000463],
-        [11.134980370216294, 1.782350708068246],
-      ],
-      "Burkina Faso": [
-        [9.39188248875952, -5.52257808504587],
-        [15.079721115192859, 2.390168903967196],
-      ],
-      Mozambique: [
-        [-26.860271483717945, 30.214420891608146],
-        [-10.472588808985629, 40.843516472590245],
-      ],
-      "South Africa": [
-        [-46.96575287742341, 16.471853065625904],
-        [-22.126451931142256, 37.97779379881331],
-      ],
-      Mali: [
-        [10.14005401392276, -12.264130411555783],
-        [24.995064546548846, 4.235637655100812],
-      ],
-      Niger: [
-        [11.695773031089407, 0.152941121016115],
-        [23.517351305173506, 15.9703218988023],
-      ],
-      "Democratic Republic of the Congo": [
-        [-13.459035, 12.2009869],
-        [5.3919312, 31.277423072584575],
-      ],
-      "Ivory Coast": [
-        [4.34406159100007, -8.618719847999955],
-        [10.726478170000064, -2.506328083999961],
-      ],
-      Mauritania: [
-        [14.719699999000056, -17.10160000099995],
-        [27.3632, -4.8333],
-      ],
-      Chad: [
-        [7.44107, 13.47348],
-        [23.4975, 24.0],
-      ],
-      Zimbabwe: [
-        [1811656.1871134627, -3046998.046108223],
-        [2347635.1455275584, -2418689.5873744874],
-      ],
-      Cameroon: [
-        [1.655927102853582, 8.501220260606601],
-        [13.079035233789057, 16.187787950453583],
-      ],
-    };
 
     // set country and it's own cities
     const countryCityMap = {};
@@ -1257,15 +1263,27 @@ class UIManager {
                 .sort();
         document.getElementById("filter-city").classList.remove("inactive");
         fill("filter-city", cities, "city");
-        // fly to bounds
+        // fly to bounds - get current proj first
+        this.monitorCountryChoice(selectedCountry);
       });
 
+    // generate fill text
     function fill(id, items, label) {
       const sel = document.getElementById(id);
       if (!sel) return;
       sel.innerHTML =
         `<option value="all">${label}</option>` +
         items.map((i) => `<option value="${i}">${i}</option>`).join("");
+    }
+  }
+
+  monitorCountryChoice(selectcountry) {
+    console.log(selectcountry);
+    const proj = this.getProj();
+    if (!proj) return;
+    if (proj == "spilhaus") return;
+    if (proj == "wgs") {
+      this.app.layerManager.flyViewBasemapWGS(selectcountry);
     }
   }
 
@@ -1734,7 +1752,7 @@ class WgsStateManager {
   }
   getZoomLevel() {
     this.current_zoom = this.app.mapManager.mapWgs.getZoom();
-    console.log(this.current_zoom);
+    // console.log(this.current_zoom);
     return this.current_zoom;
   }
 
