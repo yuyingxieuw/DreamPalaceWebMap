@@ -1,0 +1,107 @@
+{
+  "Benin": {
+    "title": "Benin",
+    "description": "Black cinema in Benin draws heavily on the country's layered oral traditions, Vodun spirituality, and complex histories of colonialism and return migration. Early filmmakers often worked with extremely limited funding and informal production networks, yet their films carried strong cultural authority, foregrounding moral storytelling, ritual memory, and the social lives of coastal and inland communities. Recent directors engage more directly with urbanization, youth identity, and transnational influences from Nigeria and Francophone West Africa. Although Benin does not sustain a large commercial film industry, its filmmakers remain active in regional festivals, where their works contribute to broader conversations about heritage and cultural continuity.",
+    "image": ["assets/img/Brazil_img1.png"]
+  },
+  "Brazil": {
+    "title": "Brzail",
+    "description": "Black cinema in Brazil arises from long-standing Afro-Brazilian efforts to challenge racial inequality and reclaim cultural space in a country that often denies the persistence of racism. Since the 1970s, Afro-Brazilian filmmakers have critiqued social marginalization while celebrating samba, Candomblé, carnival aesthetics, and the intellectual contributions of Black communities. Contemporary films increasingly focus on police violence, favelas, queer Black experiences, and the labor of domestic and cultural workers. Film collectives in Bahia, Rio, and São Paulo have created new training pipelines and digital distribution platforms, helping expand Black Brazilian cinema's global visibility.",
+    "image": ["assets/img/Brazil_img1.png"]
+  },
+  "Burkina_Faso": {
+    "title": "Burkina_Faso",
+    "description": "Burkina Faso is widely regarded as the heart of African cinema, thanks largely to sustained state support during the revolutionary period and its hosting of FESPACO, Africa’s most iconic film festival. Burkinabè cinema emphasizes moral inquiry, rural community dynamics, and anti-colonial political thought, reflecting the intellectual spirit of the nation’s post-independence cultural policy. Directors like Idrissa Ouédraogo and Gaston Kaboré produced internationally admired works that blended local storytelling with universal human themes. Today, despite economic constraints and regional instability, Burkina Faso continues to nurture new generations of filmmakers who maintain the country’s reputation for rigorous, socially grounded filmmaking.",
+    "image": ["assets/img/Burkina_Faso_img1.png"]
+  },
+  "Cameroon": {
+    "title": "Cameroon",
+    "description": "Cameroon’s Black cinema sits at the intersection of Francophone and Anglophone cultural histories, resulting in a diverse film landscape that addresses identity tensions, colonial afterlives, and the negotiation between tradition and modernity. Early filmmakers documented rural worlds and indigenous cosmologies, while recent works more directly engage authoritarian politics, gendered labor, and the challenges of youth navigating bilingual or multilingual identities. The country lacks a strong studio infrastructure, yet filmmakers have embraced low-budget innovation, online platforms, and pan-African collaborations to expand their reach. The result is a growing body of films that weave together folklore, social critique, and contemporary urban life.",
+    "image": ["assets/img/Cameroon_img1.png"]
+  },
+  "Gabon": {
+    "title": "Gabon",
+    "description": "Although relatively small in scale, Gabon's cinema is historically significant for Central Africa due to strong early state patronage and the establishment of a national film school. From the 1970s onward, Gabonese filmmakers explored themes such as mysticism, leadership, moral authority, and the complexities of oral tradition in modern society. Many films blended political allegory with folklore, critiquing elite power structures while affirming communal values. Contemporary directors continue to investigate ecological concerns, youth aspirations, and urban change, often working through documentary modes. Despite modest production volume, Gabon maintains a distinctive narrative and visual style within regional cinematic networks.",
+    "image": ["assets/img/Ghana_img1.png"]
+  },
+  "Ghana": {
+    "title": "Ghana",
+    "description": "Ghana's cinema evolved from post-independence documentary programs into one of Africa's most dynamic popular film cultures. The video-film boom of the 1980s and 1990s, known as “Ghallywood,” democratized filmmaking through low-budget production, generating melodramas, moral tales, and spiritual thrillers that directly addressed everyday social anxieties. This infrastructure later supported a wave of young digital filmmakers who combine realism, folklore, and comedy to explore migration, Christianity, gender politics, and economic precarity. With growing international co-productions and streaming opportunities, Ghanaian cinema increasingly shapes West Africa's broader media landscape while remaining closely tied to local audiences. ",
+    "image": ["assets/img/Mali_img1.png"]
+  },
+  "Ivory_Coast": {
+    "title": "Ivory Coast",
+    "description": "Mozambique is a southern African nation whose long Indian Ocean coastline is dotted with popular beaches like Tofo, as well as offshore marine parks. In the Quirimbas Archipelago, a 250km stretch of coral islands, mangrove-covered Ibo Island has colonial-era ruins surviving from a period of Portuguese rule. The Bazaruto Archipelago farther south has reefs which protect rare marine life including dugongs. ― Google",
+    "image": ["assets/img/Mozambique_img1.png"]
+  },
+  "Mali": {
+    "title": "Mali",
+    "description": "Mali occupies a central place in African film history, known for poetic, philosophical works that merge griot storytelling, Islamic traditions, and reflections on Sahelian landscapes. Filmmakers such as Souleymane Cissé and Cheick Oumar Sissoko created internationally acclaimed films that analyze power, spirituality, generational conflict, and colonial legacies. Malian cinema typically favors slow, contemplative pacing and allegorical structures, inviting audiences to consider ethical questions embedded in communal life. Despite political instability and reduced funding, Mali's artistic legacy endures and continues to inspire younger pan-African filmmakers searching for culturally rooted cinematic languages.",
+    "image": ["assets/img/Nigeria_img1.png"]
+  },
+  "Mauritania": {
+    "title": "Mauritania",
+    "description": "Mauritanian Black cinema, though small, has produced some of Africa's most influential works, including those by Abderrahmane Sissako, whose films interweave quiet political reflection, desert landscapes, and critiques of global inequality. Mauritanian filmmakers often tackle sensitive subjects such as slavery, caste hierarchies, displacement, and cross-cultural encounters along the Sahara's trade routes. The stark visual environment of the desert lends itself to minimalist storytelling and moral introspection. Production remains limited due to infrastructure challenges, yet the country's films have had outsized global impact, helping broaden international understanding of West African and Saharan social dynamics.",
+    "image": ["assets/img/Senegal_img1.png"]
+  },
+  "Mozambique": {
+    "title": "Mozambique",
+    "description": "Mozambican cinema emerged from a revolutionary documentary tradition following independence, supported by FRELIMO's belief that film could educate citizens and document national reconstruction. Early productions chronicled agricultural reform, literacy campaigns, and anti-colonial struggle, forming one of Africa's strongest political film archives. Over time, filmmakers expanded into fiction and community-based media practices, exploring civil war trauma, displacement, and cultural resilience. Contemporary directors maintain a socially engaged approach, often collaborating with local communities to represent everyday realities across rural and urban settings. Mozambique's cinema remains a vital contributor to Lusophone African culture.",
+    "image": ["assets/img/South_Africa_img1.png"]
+  },
+  "Niger": {
+    "title": "Niger",
+    "description": "Despite limited infrastructure, Niger has a rich cinematic heritage anchored in the pioneering work of Oumarou Ganda and Moustapha Alassane, whose films challenged colonial narratives and portrayed Sahelian life from local perspectives. Nigerien cinema often focuses on rural livelihoods, environmental fragility, social hierarchies, and the pressures of migration. Traditional storytelling forms—song, proverbs, puppet theater—deeply shape its narrative structures. Although economic hardship has reduced output, contemporary filmmakers and regional cooperatives keep the tradition alive through documentaries and low-budget dramas that reflect everyday struggles and communal ethics.",
+    "image": ["assets/img/United_Kingdom_img1.png"]
+  },
+  "Nigeria": {
+    "title": "Nigeria",
+    "description": "Nigeria's Nollywood is one of the world's most prolific film industries, famous for its rapid production cycle and direct engagement with everyday concerns of African audiences. Beginning in the 1990s with affordable video films, the industry explored themes of family conflict, corruption, faith, romance, and the supernatural. As Nollywood matured, filmmakers experimented with higher production values, genre films, and political commentary, reaching global audiences via Netflix and international festivals. The industry's strength lies in its entrepreneurial energy and constant reinvention, making Nigerian cinema a major cultural force across Africa and the diaspora.",
+    "image": ["assets/img/US_img1.png"]
+  },
+  "Democratic_Republic_of_the_Congo": {
+    "title": "Democratic Republic of the Congo",
+    "description": "Cinema in the Republic of the Congo has remained modest but culturally significant, shaped by political transitions and a commitment to documenting social reality. Early filmmakers used documentary and educational formats to promote national unity and modernization, while later directors turned toward intimate stories of youth, migration, music culture, and urban change. Limited funding has pushed Congolese filmmakers toward regional collaborations, workshops, and festival networks that allow their voices to circulate. Their films often emphasize resilience, cultural memory, and the contradictions of post-colonial life in Central Africa.",
+    "image": ["assets/img/US_img1.png"]
+  },
+  "Senegal": {
+    "title": "Senegal",
+    "description": "Senegalese cinema is internationally renowned for its intellectual depth and poetic sensibility. Ousmane Sembène initiated a tradition of politically engaged filmmaking that critiques colonialism, patriarchy, religious authority, and class inequality. Djibril Diop Mambéty and Safi Faye expanded the aesthetic possibilities of African cinema, blending surrealism, ethnographic realism, and lyrical imagery. Contemporary directors—especially women—continue exploring migration, youth aspirations, and spiritual life. Senegal’s strong artistic institutions and festival culture sustain a vibrant cinematic ecosystem that remains central to pan-African film history.",
+    "image": ["assets/img/US_img1.png"]
+  },
+  "South_Africa": {
+    "title": "South Africa",
+    "description": "Black cinema in South Africa developed under the constraints of apartheid, producing clandestine documentaries and narrative films that exposed racial oppression. After 1994, the industry diversified, exploring reconciliation, trauma, class divides, and the contradictions of post-apartheid democracy. Filmmakers draw on varied Black experiences shaped by language, migration, and township cultures. Today, South Africa hosts a robust commercial industry, creating both high-budget international co-productions and politically committed independent works. Its cinema continues to interrogate inequality while highlighting creative resilience.",
+    "image": ["assets/img/US_img1.png"]
+  },
+  "Sudan": {
+    "title": "Sudan",
+    "description": "Sudanese cinema has endured decades of censorship and conflict, yet it has experienced a powerful revival in the past decade. Early films recorded national development and regional cultures, but many were suppressed or lost. The new wave—supported by the Sudan Film Factory—centers revolution, women's agency, ethnic diversity, and everyday survival under political repression. Directors blend documentary immediacy with experimental storytelling, creating films that reflect the emotional and political complexity of contemporary Sudan. This renaissance has drawn international attention and renewed interest in Sudan's cinematic heritage.",
+    "image": ["assets/img/US_img1.png"]
+  },
+  "Chad": {
+    "title": "Tchad(Chad)",
+    "description": "Chadian cinema is known for emotionally resonant works that confront war, displacement, and personal loss. Mahamat-Saleh Haroun's films brought global recognition through their quiet, observational style and focus on ordinary people navigating political violence and family rupture. Because funding is scarce, Chadian filmmakers often work transnationally, yet their stories remain grounded in Sahelian realities. Issues such as youth unemployment, gender inequality, and community reconstruction recur across contemporary productions. This small but powerful cinema has become an essential voice in African film discourse.",
+    "image": ["assets/img/US_img1.png"]
+  },
+  "Togo": {
+    "title": "Togo",
+    "description": "Togolese cinema has historically relied on documentary filmmaking due to limited resources, but it has developed a distinctive style attentive to everyday concerns, folklore, and gendered labor. Much of its output reflects community life, traditional ceremony, and the social transitions brought by urbanization and migration. Recent independent filmmakers use digital tools to explore youth aspirations, political frustration, and cultural heritage. Although small, Togo's cinematic scene participates actively in West African film festivals, contributing nuanced perspectives on regional identity and social change.",
+    "image": ["assets/img/US_img1.png"]
+  },
+  "United_Kingdom": {
+    "title": "United Kingdom",
+    "description": "Black British cinema grew from diasporic communities, political activism, and the fight for representation in a media landscape historically dominated by white perspectives. The 1980s Black British film movement—centered around the Workshop Declaration—produced groundbreaking films addressing racism, policing, housing struggles, and cultural identity. Later generations, including Steve McQueen and filmmakers from African diasporas, expanded into art cinema, documentary, and mainstream production. Current works explore themes of belonging, class, migration, and Black British futures, forming an influential and continually evolving cinematic tradition.",
+    "image": ["assets/img/US_img1.png"]
+  },
+  "US": {
+    "title": "United States",
+    "description": "Black cinema in the United States spans more than a century, beginning with race films by Oscar Micheaux that challenged segregation and Hollywood stereotypes. The civil rights era produced politically urgent documentaries, while the 1970s introduced Blaxploitation and independent Black auteurs. Later, filmmakers such as Spike Lee, Julie Dash, Ava DuVernay, Jordan Peele, and Ryan Coogler reshaped mainstream narratives, foregrounding racial justice, Black joy, community memory, and genre innovation. Independent Black cinema remains crucial for experimentation and cultural preservation, giving voice to stories marginalized by Hollywood.",
+    "image": ["assets/img/US_img1.png"]
+  },
+  "Zimbabwe": {
+    "title": "Zimbabwe",
+    "description": "Zimbabwean cinema emerged in the post-independence period through cultural institutions that aimed to document social change and promote national unity. Filmmakers have addressed land reform, liberation war memory, migration, and economic struggles, often through realist storytelling and strong documentary traditions. Although the industry faces resource shortages, digital tools have enabled younger artists to experiment with hybrid forms. Zimbabwean films frequently highlight resilience, community values, and the emotional aftermath of political instability, contributing unique perspectives to Southern African cinema.",
+    "image": ["assets/img/US_img1.png"]
+  }
+}

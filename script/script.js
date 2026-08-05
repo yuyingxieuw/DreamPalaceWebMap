@@ -242,7 +242,7 @@ class MapManager {
       className: "glow-line",
     };
     this.spilhausCountryFiles.forEach((key) => {
-      fetch(`assets/${key}.geojson`, {
+      fetch(`static/${key}.geojson`, {
         cache: "no-cache",
       })
         .then((r) => {
