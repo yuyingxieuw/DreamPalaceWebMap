@@ -971,7 +971,7 @@ class LayerManager {
     if (!map) return;
     try {
       const response = await fetch(
-        "assets/selectedcountryWGS_withbounds.geojson",
+        "static/selectedcountryWGS_withbounds.geojson",
       );
       const data = await response.json();
       this.country = L.geoJSON(data, {
@@ -1086,7 +1086,7 @@ class UIManager {
   }
 
   loadAreaInfo() {
-    fetch("assets/area_info.json")
+    fetch("static/area_info.json")
       .then((res) => res.json())
       .then((data) => {
         this.area_info = data;
