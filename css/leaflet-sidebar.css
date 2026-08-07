@@ -675,6 +675,15 @@
   color: #000;
 }
 
+.btn-copy-link {
+  border-color: #4f9cfb;
+}
+
+.btn-copy-link:hover {
+  background: #4f9cfb;
+  color: #000;
+}
+
 #choose_style {
   position: relative;
   top: 10px;

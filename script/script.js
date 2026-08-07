@@ -1,3 +1,15 @@
+// top level helper for individual cinema sharing
+function parseCinemaSlugFromUrl() {
+  return new URLSearchParams(window.location.search).get("cinema");
+}
+
+function buildCinemaShareUrl(slug) {
+  const url = new URL(wodow.loaction.href);
+  url.search = new URLSearchParams({ cinema: slug }).toString;
+  url.hash = "";
+  return url.toString();
+}
+
 class WebMapApp {
   constructor() {
     this.mapManager = new MapManager(this);
@@ -21,10 +33,35 @@ class WebMapApp {
     this.mapManager.loadSpilhausCountries();
     this.mapManager.loadSpilhausPalace();
     this.mapManager.spilhausCenterSwitch();
-    this.mapManager.activate("spilhaus");
-    this.layerManager.loadForProjection("spilhaus");
     this.uiManager.initFilterEvents();
     this.timelineManager.initTimelineUI();
+
+    const slug = parseCinemaSlugFromUrl();
+    const feature = slug ? this.dataManager.findFeatureBySlug(slug) : null;
+
+    if (feature) {
+      this.focusCinemaFromSlug(feature);
+    } else {
+      this.mapManager.activate("spilhaus");
+      this.layerManager.loadForProjection("spilhaus");
+    }
+  }
+
+  focusCinemaFromSlug(feature) {
+    const props = feature.properties;
+    const [lng, lat] = feature.geometry.coordinates;
+    this.uiManager.applyFiltersForProperties(props);
+    // activates WGS + triggers the normal projectionchange -> loadForProjection chain,
+    // which re-renders palace points using the filters just set above
+    this.mapManager.activate("wgs", {
+      center: [lat, lng],
+      zoom: this.mapManager.wgsDefaultZoom,
+    });
+
+    // then fly in closer to the exact point ("附近")
+    this.mapManager.getActiveMap().flyTo([lat, lng], 10);
+
+    this.uiManager.openPalaceDetail(props);
   }
 }
 
@@ -460,6 +497,7 @@ class DataManager {
     this.geojson_wgs = []; // geojson data already
     this.geojson_spil = []; // geojson
     this.unique_country = [];
+    this.deepLinkFeature = null; //set when the URL points at a specific cinema slug
   }
 
   async fetchData() {
@@ -483,6 +521,26 @@ class DataManager {
     }
   }
 
+  findFeatureBySlug(slug) {
+    const features = this.geojson_wgs?.features || [];
+    const target = String(slug).trim().toLowerCase();
+    return (
+      features.find((f) => {
+        const p = f.properties;
+        if (
+          String(p.Slug || "")
+            .trim()
+            .toLowerCase() === target
+        )
+          return true;
+        const aliases = Array.isArray(p["Slug Aliases"])
+          ? p["Slug Aliases"]
+          : [];
+        return aliases.some((a) => String(a).trim().toLowerCase() === target);
+      }) || null
+    );
+  }
+
   // get combined filter data
   getCombinedFilters() {
     return {
@@ -493,6 +551,10 @@ class DataManager {
 
   // filter original data
   filterData() {
+    if (this.deepLinkFeature) {
+      return [this.deepLinkFeature];
+    }
+
     const filters = this.getCombinedFilters();
 
     return this.geojson_wgs.features.filter((f) => {
@@ -528,6 +590,8 @@ class DataManager {
       );
     });
   }
+
+  // parse slug
 }
 
 class LayerManager {
@@ -1229,6 +1293,9 @@ class UIManager {
       }
     }
 
+    // keep a reference for reuse
+    this.countryCityMap = countryCityMap;
+
     // all countries
     const countries = Object.keys(countryCityMap).sort();
 
@@ -1275,6 +1342,46 @@ class UIManager {
         `<option value="all">${label}</option>` +
         items.map((i) => `<option value="${i}">${i}</option>`).join("");
     }
+  }
+
+  // function apply filters to match a given feature's properties
+  applyFiltersForProperties(props) {
+    const countrySelect = document.getElementById("filter-country");
+    countrySelect.value = props.Country;
+
+    const cities = [...(this.countryCityMap[props.Country] || [])]
+      .filter((c) => c && c !== "undefined" && c !== "null")
+      .sort();
+    this.fillSelectOptions("filter-city", cities, "city");
+    const citySelect = document.getElementById("filter-city");
+    citySelect.classList.remove("inactive");
+    citySelect.value = props.City;
+
+    document
+      .querySelectorAll('#dropdown-condition input[type="checkbox"]')
+      .forEach((cb) => {
+        cb.checked = cb.value === props.Condition;
+      });
+    document
+      .querySelector("#dropdown-condition .dropdown-trigger")
+      ?.classList.add("has-selection");
+  }
+
+  fillSelectOptions(id, items, label) {
+    const sel = document.getElementById(id);
+    if (!sel)
+      returnsel.inerHTML =
+        `<option value="all">${label}</option>` +
+        items.map((i) => `<option value="${i}">${i}</option>`).join("");
+  }
+
+  openPalaceDetail(properties) {
+    const message = this.generatePointMsg(properties);
+    this.initSideBar();
+    const el = document.querySelector("#data_query_window");
+    this.handleAboutPalaceClick();
+    document.querySelector("#data_query_window").innerHTML = message;
+    this.enableCarouselInSidebar();
   }
 
   monitorCountryChoice(selectcountry) {
