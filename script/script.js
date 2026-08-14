@@ -5,7 +5,7 @@ function parseCinemaSlugFromUrl() {
 
 function buildCinemaShareUrl(slug) {
   const url = new URL(window.location.href);
-  url.search = new URLSearchParams({ cinema: slug }).toString();
+  url.search = new URLSearchParams({ view: "map", cinema: slug }).toString();
   url.hash = "";
   return url.toString();
 }
