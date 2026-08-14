@@ -58,8 +58,14 @@ class WebMapApp {
       zoom: this.mapManager.wgsDefaultZoom,
     });
 
-    // then fly in closer to the exact point ("附近")
-    this.mapManager.getActiveMap().flyTo([lat, lng], 10);
+    // then fly in closer to the exact point ('close place')
+    const latlng = L.latLng(lat, lng);
+    const bounds = latlng.toBounds(1500);
+    this.mapManager.getActiveMap().flyToBounds(bounds, {
+      paddingTopLeft: [520, 0],
+      paddingBottomRight: [0, 0],
+      maxZoom: 14,
+    });
     // open the infotab
     this.uiManager.openPalaceDetail(props);
   }
