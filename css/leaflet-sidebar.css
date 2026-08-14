@@ -675,15 +675,6 @@
   color: #000;
 }
 
-.btn-copy-link {
-  border-color: #4f9cfb;
-}
-
-.btn-copy-link:hover {
-  background: #4f9cfb;
-  color: #000;
-}
-
 #choose_style {
   position: relative;
   top: 10px;
@@ -711,11 +702,39 @@
 /* point message below - generate through JS script  */
 /* palace info picture  */
 #data_query_window {
+  position: relative;
   padding-top: 0px;
   font-size: 14px; /* ★ 最大字号 */
   line-height: 1.4; /* 可读性 */
   font-family: "Basis", sans-serif;
   color: #fdf9ed;
+}
+
+.share-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.5px solid #fdf9ed;
+  border-radius: 50%;
+  background: rgba(253, 249, 237, 0.1);
+  color: #fdf9ed;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.share-btn:hover {
+  background: rgba(255, 255, 255, 1);
+  color: #000;
+}
+
+.share-btn.copied {
+  border-color: #4f9cfb;
+  color: #4f9cfb;
 }
 
 #data_query_window h3 {

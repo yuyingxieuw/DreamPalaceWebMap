@@ -4,8 +4,8 @@ function parseCinemaSlugFromUrl() {
 }
 
 function buildCinemaShareUrl(slug) {
-  const url = new URL(wodow.loaction.href);
-  url.search = new URLSearchParams({ cinema: slug }).toString;
+  const url = new URL(window.location.href);
+  url.search = new URLSearchParams({ cinema: slug }).toString();
   url.hash = "";
   return url.toString();
 }
@@ -50,7 +50,7 @@ class WebMapApp {
   focusCinemaFromSlug(feature) {
     const props = feature.properties;
     const [lng, lat] = feature.geometry.coordinates;
-    this.uiManager.applyFiltersForProperties(props);
+    // this.uiManager.applyFiltersForProperties(props);
     // activates WGS + triggers the normal projectionchange -> loadForProjection chain,
     // which re-renders palace points using the filters just set above
     this.mapManager.activate("wgs", {
@@ -60,7 +60,7 @@ class WebMapApp {
 
     // then fly in closer to the exact point ("附近")
     this.mapManager.getActiveMap().flyTo([lat, lng], 10);
-
+    // open the infotab
     this.uiManager.openPalaceDetail(props);
   }
 }
@@ -1345,6 +1345,7 @@ class UIManager {
   }
 
   // function apply filters to match a given feature's properties
+  // currently not in use
   applyFiltersForProperties(props) {
     const countrySelect = document.getElementById("filter-country");
     countrySelect.value = props.Country;
@@ -1533,6 +1534,9 @@ class UIManager {
 
     return `
     <h3> ${data.Name || ""} </h3>
+    <button class="share-btn" data-slug="${data.Slug || ""}" aria-label="Copy link to this cinema" title="Copy link">
+      <i class="fa-solid fa-share-nodes"></i>
+    </button>
     <h4> ${data.City || ""},&nbsp; ${data.Country}</h4>
     <h5> ${data["Creation"] || "/"} - ${data["Closure"] || "/"} </h5>
     <p> ${data.Condition || ""} </p>
@@ -1571,7 +1575,15 @@ class UIManager {
         const carouselKey = arrow.dataset.carousel;
         this.shiftCarouselImage(root, carouselKey, dir);
       }
+
+      // Share Button
+      const shareBtn = e.target.closest(".share-btn");
+      if (shareBtn) {
+        this.copyShareLink(shareBtn.dataset.slug, shareBtn);
+        return;
+      }
     });
+    root.__carouselBound = true;
   }
 
   switchCarouselImage(root, key, idx) {
@@ -1612,6 +1624,28 @@ class UIManager {
     dots.forEach((d) => d.classList.remove("active"));
     const activateDot = carousel.querySelector(`.dot[data-idx="${nextIdx}"]`);
     if (activateDot) activateDot.classList.add("active");
+  }
+
+  // function for share & copy URL
+  copyShareLink(slug, buttonEl) {
+    if (!slug) return;
+    const url = buildCinemaShareUrl(slug);
+
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        const icon = buttonEl.querySelector("i");
+        const originalClass = icon.className;
+        icon.className = "fa-solid fa-check";
+        buttonEl.classList.add("copied");
+        setTimeout(() => {
+          icon.className = originalClass;
+          buttonEl.classList.remove("copied");
+        }, 1500);
+      })
+      .catch((err) => {
+        console.warn("Clipboard write failed:", err);
+      });
   }
 
   // back to ocean bottom
