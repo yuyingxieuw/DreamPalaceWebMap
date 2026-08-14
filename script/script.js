@@ -54,7 +54,7 @@ class WebMapApp {
     // activates WGS + triggers the normal projectionchange -> loadForProjection chain,
     // which re-renders palace points using the filters just set above
     this.mapManager.activate("wgs", {
-      center: [lat, lng - 30],
+      center: [lat, lng],
       zoom: this.mapManager.wgsDefaultZoom,
     });
 
