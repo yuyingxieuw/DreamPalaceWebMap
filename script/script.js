@@ -4,9 +4,11 @@ function parseCinemaSlugFromUrl() {
 }
 
 function buildCinemaShareUrl(slug) {
-  const url = new URL(window.location.href);
-  url.search = new URLSearchParams({ view: "map", cinema: slug }).toString();
-  url.hash = "";
+  const base =
+    process.env.NEXT_PUBLIC_SITE_URL || "https://www.dreampalaces.co";
+  const url = new URL("/map", base);
+  url.searchParams.set("view", "map");
+  url.searchParams.set("cinema", slug);
   return url.toString();
 }
 
@@ -629,8 +631,6 @@ class DataManager {
       );
     });
   }
-
-  // parse slug
 }
 
 class LayerManager {

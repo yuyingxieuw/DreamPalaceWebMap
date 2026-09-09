@@ -59,7 +59,6 @@ body {
   inset: 0;
   height: 100%;
   width: 100%;
-  z-index: 0;
   pointer-events: auto;
   display: block;
   background: #000 !important;
@@ -82,7 +81,6 @@ body {
   position: absolute;
   inset: 0;
   width: 100%;
-  z-index: 0;
   pointer-events: none;
   display: none;
 }
