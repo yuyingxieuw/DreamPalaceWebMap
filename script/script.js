@@ -4,8 +4,7 @@ function parseCinemaSlugFromUrl() {
 }
 
 function buildCinemaShareUrl(slug) {
-  const base =
-    process.env.NEXT_PUBLIC_SITE_URL || "https://www.dreampalaces.co";
+  const base = "https://www.dreampalaces.co";
   const url = new URL("/map", base);
   url.search = new URLSearchParams({ view: "map", cinema: slug }).toString();
   url.hash = "";
