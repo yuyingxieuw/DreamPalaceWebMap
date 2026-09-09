@@ -154,3 +154,7 @@ body {
 .country-label::before {
   display: none;
 }
+
+.leaflet-container {
+  background: #0a0e14;
+}

@@ -142,6 +142,28 @@ class MapManager {
       "US",
       "Zimbabwe",
     ];
+    //base map painting rules
+    this.darkPaintRules = [
+      {
+        dataLayer: "ocean",
+        symbolizer: new protomapsL.PolygonSymbolizer({ fill: "#0a0e14" }),
+      },
+      {
+        dataLayer: "land",
+        symbolizer: new protomapsL.PolygonSymbolizer({ fill: "#1a1d24" }),
+      },
+      {
+        dataLayer: "lakes",
+        symbolizer: new protomapsL.PolygonSymbolizer({ fill: "#0a0e14" }),
+      },
+      {
+        dataLayer: "boundary",
+        symbolizer: new protomapsL.LineSymbolizer({
+          color: "#3a3f4b",
+          width: 0.5,
+        }),
+      },
+    ];
   }
 
   buildCRS() {
@@ -257,21 +279,32 @@ class MapManager {
       fadeAnimation: true,
     });
 
-    L.tileLayer(
-      "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-      {
-        tileSize: 512,
-        zoomOffset: -1,
-        minZoom: 2,
-        maxZoom: 20,
-        reuseTiles: true,
-        keepBuffer: 6,
-        updateWhenIdle: false,
-        updateWhenZooming: false,
-        detectRetina: true,
-        attribution: "&copy; CARTO &copy; OpenStreetMap contributors",
-      },
-    ).addTo(this.mapWgs);
+    protomapsL
+      .leafletLayer({
+        url: "https://pub-c8ae9342f45745e98d29045b2c73cebe.r2.dev/world-dark.pmtiles",
+        paintRules: this.darkPaintRules,
+        labelRules: [],
+        maxDataZoom: 6,
+        attribution: "&copy; Natural Earth &copy; Protomaps",
+      })
+      .addTo(this.mapWgs);
+
+    // ------ Old Raster Layer ------
+    // L.tileLayer(
+    //   "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+    //   {
+    //     tileSize: 512,
+    //     zoomOffset: -1,
+    //     minZoom: 2,
+    //     maxZoom: 20,
+    //     reuseTiles: true,
+    //     keepBuffer: 6,
+    //     updateWhenIdle: false,
+    //     updateWhenZooming: false,
+    //     detectRetina: true,
+    //     attribution: "&copy; CARTO &copy; OpenStreetMap contributors",
+    //   },
+    // ).addTo(this.mapWgs);
   }
 
   loadSpilhausCountries() {

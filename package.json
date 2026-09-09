@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "leaflet.timeline": "^1.6.0"
+    "leaflet.timeline": "^1.6.0",
+    "protomaps-leaflet": "^5.1.0"
   }
 }
