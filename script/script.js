@@ -7,8 +7,8 @@ function buildCinemaShareUrl(slug) {
   const base =
     process.env.NEXT_PUBLIC_SITE_URL || "https://www.dreampalaces.co";
   const url = new URL("/map", base);
-  url.searchParams.set("view", "map");
-  url.searchParams.set("cinema", slug);
+  url.search = new URLSearchParams({ view: "map", cinema: slug }).toString();
+  url.hash = "";
   return url.toString();
 }
 
