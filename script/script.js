@@ -143,29 +143,87 @@ class MapManager {
       "US",
       "Zimbabwe",
     ];
+
     //base map painting rules
     this.darkPaintRules = [
       {
-        dataLayer: "ocean",
-        symbolizer: new protomapsL.PolygonSymbolizer({ fill: "#0a0e14" }),
-      },
-      {
         dataLayer: "land",
-        symbolizer: new protomapsL.PolygonSymbolizer({ fill: "#1a1d24" }),
+        symbolizer: new protomapsL.PolygonSymbolizer({ fill: "#1a1f28" }),
       },
       {
         dataLayer: "lakes",
         symbolizer: new protomapsL.PolygonSymbolizer({ fill: "#0a0e14" }),
       },
       {
+        dataLayer: "river",
+        filter: (zoom, feature) => {
+          console.log("zoom:", zoom, "props:", feature.props);
+          return zoom >= feature.props.min_zoom;
+        },
+        symbolizer: new protomapsL.LineSymbolizer({
+          color: "#1e3a4a",
+          width: 0.5,
+        }),
+      },
+      {
         dataLayer: "boundary",
         symbolizer: new protomapsL.LineSymbolizer({
-          color: "#3a3f4b",
-          width: 0.5,
+          color: "#3a4250",
+          width: 0.8,
+        }),
+      },
+      {
+        dataLayer: "road",
+        filter: (zoom, feature) => {
+          return zoom >= feature.props.min_zoom;
+        },
+        symbolizer: new protomapsL.LineSymbolizer({
+          color: "#2a2d33",
+          width: 0.6,
+        }),
+      },
+      {
+        dataLayer: "railroad",
+        filter: (zoom, feature) => {
+          return zoom >= feature.props.min_zoom;
+        },
+        symbolizer: new protomapsL.LineSymbolizer({
+          color: "#33373d",
+          width: 0.4,
+          dash: [2, 2],
         }),
       },
     ];
   }
+
+  // basemap label rules
+  labelRules = [
+    {
+      dataLayer: "country",
+      symbolizer: new protomapsL.CenteredTextSymbolizer({
+        labelProps: ["NAME"],
+        fill: "#8a92a0",
+        font: "600 13px sans-serif",
+      }),
+    },
+    {
+      dataLayer: "place",
+      filter: (zoom, feature) => {
+        const sr = feature.props.SCALERANK;
+        if (zoom < 3) return sr <= 1;
+        if (zoom < 5) return sr <= 4;
+        if (zoom < 7) return sr <= 7;
+        return true;
+      },
+      symbolizer: new protomapsL.CenteredTextSymbolizer({
+        labelProps: ["NAME"],
+        fill: "#c8ccd4",
+        halo: "#0a0e14",
+        haloRadius: 1.5,
+        font: "400 11px sans-serif",
+      }),
+    },
+  ];
 
   buildCRS() {
     const xOffset = 0; // 右移 20万
@@ -284,8 +342,8 @@ class MapManager {
       .leafletLayer({
         url: "https://pub-c8ae9342f45745e98d29045b2c73cebe.r2.dev/world-dark.pmtiles",
         paintRules: this.darkPaintRules,
-        labelRules: [],
-        maxDataZoom: 6,
+        labelRules: this.labelRules,
+        maxDataZoom: 8,
         attribution: "&copy; Natural Earth &copy; Protomaps",
       })
       .addTo(this.mapWgs);
