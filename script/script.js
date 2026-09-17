@@ -214,8 +214,11 @@ class MapManager {
       },
       symbolizer: new protomapsL.CenteredTextSymbolizer({
         labelProps: ["name"],
-        fill: "#8a92a0",
-        font: "600 13px sans-serif",
+        fill: "#c8ccd4",
+        halo: "#0a0e14",
+        haloRadius: 1.5,
+        font: '400 13px "avenir", sans-serif',
+        maxLineChars: 100,
       }),
     },
     {
@@ -232,9 +235,10 @@ class MapManager {
       symbolizer: new protomapsL.CenteredTextSymbolizer({
         labelProps: ["NAME"],
         fill: "#c8ccd4",
-        halo: "#0a0e14",
+        halo: "#141a22",
         haloRadius: 1.5,
-        font: "400 11px sans-serif",
+        font: '400 11px "avenir", sans-serif',
+        maxLineChars: 100,
       }),
     },
   ];
