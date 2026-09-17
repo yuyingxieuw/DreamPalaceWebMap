@@ -148,7 +148,7 @@ class MapManager {
     this.darkPaintRules = [
       {
         dataLayer: "land",
-        symbolizer: new protomapsL.PolygonSymbolizer({ fill: "#1a1f28" }),
+        symbolizer: new protomapsL.PolygonSymbolizer({ fill: "#000" }),
       },
       {
         dataLayer: "lakes",
@@ -175,10 +175,16 @@ class MapManager {
       {
         dataLayer: "road",
         filter: (zoom, feature) => {
-          return zoom >= feature.props.min_zoom;
+          const sr = feature.props.scalerank;
+          if (zoom < 5) return sr <= 1;
+          if (zoom < 6) return sr <= 3;
+          if (zoom < 7) return sr <= 5;
+          if (zoom < 8) return sr <= 7;
+          if (zoom < 9) return sr <= 9;
+          return true;
         },
         symbolizer: new protomapsL.LineSymbolizer({
-          color: "#2a2d33",
+          color: "#5b5b5f",
           width: 0.6,
         }),
       },
@@ -200,8 +206,14 @@ class MapManager {
   labelRules = [
     {
       dataLayer: "country",
+      filter: (zoom, feature) => {
+        const sr = feature.props.scalerank;
+        if (zoom < 5) return sr <= 1;
+        if (zoom < 8) return sr <= 2;
+        return true;
+      },
       symbolizer: new protomapsL.CenteredTextSymbolizer({
-        labelProps: ["NAME"],
+        labelProps: ["name"],
         fill: "#8a92a0",
         font: "600 13px sans-serif",
       }),
@@ -210,9 +222,11 @@ class MapManager {
       dataLayer: "place",
       filter: (zoom, feature) => {
         const sr = feature.props.SCALERANK;
-        if (zoom < 3) return sr <= 1;
-        if (zoom < 5) return sr <= 4;
-        if (zoom < 7) return sr <= 7;
+        if (zoom < 5) return sr < 0;
+        if (zoom < 6) return sr <= 2;
+        if (zoom < 7) return sr <= 5;
+        if (zoom < 8) return sr <= 7;
+        if (zoom < 9) return sr <= 9;
         return true;
       },
       symbolizer: new protomapsL.CenteredTextSymbolizer({

@@ -142,7 +142,7 @@ body {
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  color: #fffbfb !important ; /* 文字颜色自己调 */
+  color: #fffbfb !important ;
   font-family: "Basis", sans-serif;
   font-size: 12px;
   padding: 0;
@@ -154,5 +154,5 @@ body {
 }
 
 .leaflet-container {
-  background: #0a0e14;
+  background: #1a1f28;
 }
