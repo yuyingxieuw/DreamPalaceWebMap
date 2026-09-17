@@ -156,3 +156,22 @@ body {
 .leaflet-container {
   background: #1a1f28;
 }
+
+.leaflet-control-zoom {
+  border: 1px solid #333 !important;
+}
+
+.leaflet-control-zoom a,
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+  background-color: #000 !important;
+  color: #fff !important;
+  border-color: #333 !important;
+}
+
+.leaflet-control-zoom a:hover,
+.leaflet-control-zoom-in:hover,
+.leaflet-control-zoom-out:hover {
+  background-color: #222 !important;
+  color: #fff !important;
+}
